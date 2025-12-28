@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Diablo Immortal DPS Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #101018;
+            color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #f0c96b;
+        }
+
+        .section {
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #181824;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #f0c96b;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .field {
+            flex: 1 1 180px;
+            min-width: 160px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+            color: #ccccff;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 6px 8px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background: #0f172a;
+            color: #e5e7eb;
+            box-sizing: border-box;
+        }
+
+        input[type="number"].blue-input {
+            background: #0b1b33;
+            border-color: #3b82f6;
+        }
+
+        .hint {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 15px 0;
+            background: #3b82f6;
+            color: #f9fafb;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        .result-box {
+            border-radius: 8px;
+            padding: 15px;
+            background: #111827;
+            border: 1px solid #4b5563;
+            margin-top: 10px;
+        }
+
+        .result-main {
+            font-size: 1.4rem;
+            color: #fbbf24;
+            margin-bottom: 6px;
+        }
+
+        .result-sub {
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        .small-note {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Diablo Immortal DPS Calculator</h1>
+<h2>Based on Auroth-style DMG breakdown</h2>
+
+<div class="section">
+    <div class="section-title">1. Base Damage Inputs</div>
+    <div class="field-group">
+        <div class="field">
+            <label for="totalBaseDmg">Total Item Base DMG
+                <div class="hint">Sum of all item base damage (E column)</div>
+            </label>
+            <input id="totalBaseDmg" type="number" class="blue-input" value="0">
+        </div>
+        <div class="field">
+            <label for="itemBaseIncreasePct">Item Base DMG increased % (F)</label>
+            <input id="itemBaseIncreasePct" type="number" class="blue-input" value="0">
+        </div>
+        <div class="field">
+            <label for="gloveGemRanks">Total Normal Gem ranks in Gloves (G)</label>
+            <input id="gloveGemRanks" type="number" class="blue-input" value="0">
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-title">2. Extra Flat Damage Sources</div>
+    <div class="field-group">
+        <div class="field">
+            <label for="paragonDmg">Paragon DMG (H)</label>
+            <input id="paragonDmg" type="number" class="blue-input" value="0">
+        </div>
+        <div class="field">
+            <label for="horadrimDmg">Legacy of the Horadrim DMG (I)</label>
+            <input id="horadrimDmg" type="number" class="blue-input" value="0">
+        </div>
+        <div class="field">
+            <label for="intStrDmg">INT / STR / Tableau / Demonic Remains DMG (J)</label>
+            <input id="intStrDmg" type="number" class="blue-input" value="0">
+        </div>
+        <div class="field">
+            <label for="tourmalineDmg">Tourmaline DMG (K)</label>
+            <input id="tourmalineDmg" type="number" class="blue-input" value="0">
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-title">3. Resonance & Bracket DMG Modifiers</div>
+    <div class="field-group">
+        <div class="field">
+            <label for="resonance">Resonance</label>
+            <input id="resonance" type="number" class="blue-input" value="0">
+        </div>
+        <div class="field">
+            <label for="b1Pct">Bracket 1 % – Normal DMG modifiers</label>
+            <div class="hint">Primary dmg, Shepherd, WB Attacker, etc.</div>
+            <input id="b1Pct" type="number" class="blue-input" value="6">
+        </div>
+        <div class="field">
+            <label for="b2Pct">Bracket 2 % – Legendary Gem DMG</label>
+            <input id="b2Pct" type="number" class="blue-input" value="0">
+        </div>
+        <div class="field">
+            <label for="b3Pct">Bracket 3 % – Buffs / Debuffs</label>
+            <div class="hint">Bone Wall, Poison Golem, Monk buffs, etc.</div>
+            <input id="b3Pct" type="number" class="blue-input" value="0">
+        </div>
+        <div class="field">
+            <label for="b4Pct">Bracket 4 % – Combat Rating DMG</label>
+            <div class="hint">Often capped at ~11.3%</div>
+            <input id="b4Pct" type="number" class="blue-input" value="0">
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-title">4. Critical & Attack Speed</div>
+    <div class="field-group">
+        <div class="field">
+            <label for="critChancePct">Critical Hit Chance %</label>
+            <input id="critChancePct" type="number" class="blue-input" value="3">
+        </div>
+        <div class="field">
+            <label for="critDmgPct">Critical Hit Damage %</label>
+            <div class="hint">Include attributes + paragon (Base 100% + bonus)</div>
+            <input id="critDmgPct" type="number" class="blue-input" value="100">
+        </div>
+        <div class="field">
+            <label for="attackSpeedPct">Attack Speed % (relevant to main skill)</label>
+            <input id="attackSpeedPct" type="number" class="blue-input" value="0">
+        </div>
+    </div>
+</div>
+
+<button onclick="calculateDPS()">Calculate DPS</button>
+
+<div class="result-box">
+    <div class="result-main" id="avgDpsResult">Avg DPS Score: 0</div>
+    <div class="result-sub" id="detailResult"></div>
+    <div class="small-note">
+        This is a simplified DPS index based on your inputs and Auroth-style brackets (B1–B4), crit and attack speed.
+        You can tune formulas further once you verify exact spreadsheet math.
+    </div>
+</div>
+
+<script>
+function calculateDPS() {
+    function val(id) {
+        return Number(document.getElementById(id).value) || 0;
+    }
+
+    // Base and flat DMG
+    const totalBaseDmg = val("totalBaseDmg");
+    const itemBaseIncreasePct = val("itemBaseIncreasePct");
+    const gloveGemRanks = val("gloveGemRanks");
+    const paragonDmg = val("paragonDmg");
+    const horadrimDmg = val("horadrimDmg");
+    const intStrDmg = val("intStrDmg");
+    const tourmalineDmg = val("tourmalineDmg");
+    const resonance = val("resonance");
+
+    // Modifiers
+    const b1Pct = val("b1Pct");
+    const b2Pct = val("b2Pct");
+    const b3Pct = val("b3Pct");
+    const b4Pct = val("b4Pct");
+    const critChancePct = val("critChancePct");
+    const critDmgPct = val("critDmgPct");
+    const attackSpeedPct = val("attackSpeedPct");
+
+    // --- Simplified assumptions (you can adjust later) ---
+
+    // 1) Base DMG after item base increase
+    const baseFromItems = totalBaseDmg * (1 + itemBaseIncreasePct / 100);
+
+    // 2) Flat DMG stacking
+    const flatExtraDmg = paragonDmg + horadrimDmg + intStrDmg + tourmalineDmg;
+
+    // 3) Simple resonance scaling (tune this later if needed)
+    const resonanceMultiplier = 1 + (resonance / 10000); // e.g. 1000 res = +10%
+
+    const flatBaseDmg = (baseFromItems + flatExtraDmg) * resonanceMultiplier;
+
+    // 4) Bracket multipliers
+    const b1Mult = 1 + b1Pct / 100;
+    const b2Mult = 1 + b2Pct / 100;
+    const b3Mult = 1 + b3Pct / 100;
+    const b4Mult = 1 + b4Pct / 100;
+
+    // 5) Crit multiplier (expected value):
+    //    EV = (1 - critChance) * 1 + critChance * (1 + critDmg)
+    const critChance = critChancePct / 100;
+    const critBonus = critDmgPct / 100; // 100% -> 1.0
+    const critMult = (1 - critChance) * 1 + critChance * (1 + critBonus);
+
+    // 6) Attack speed multiplier
+    const asMult = 1 + attackSpeedPct / 100;
+
+    // 7) Final DPS index
+    const avgDps = flatBaseDmg * b1Mult * b2Mult * b3Mult * b4Mult * critMult * asMult;
+
+    // Round for display
+    const avgDpsRounded = Math.round(avgDps);
+
+    // Breakdown text
+    const detailText =
+        "Base (items + flat) after resonance: " + flatBaseDmg.toFixed(1) +
+        " | B1: x" + b1Mult.toFixed(2) +
+        " | B2: x" + b2Mult.toFixed(2) +
+        " | B3: x" + b3Mult.toFixed(2) +
+        " | B4: x" + b4Mult.toFixed(2) +
+        " | Crit: x" + critMult.toFixed(2) +
+        " | AS: x" + asMult.toFixed(2);
+
+    document.getElementById("avgDpsResult").innerText = "Avg DPS Score: " + avgDpsRounded.toLocaleString();
+    document.getElementById("detailResult").innerText = detailText;
+}
+</script>
+
+</body>
+</html>
