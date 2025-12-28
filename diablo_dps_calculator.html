@@ -2,27 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Diablo Immortal DPS Calculator</title>
-
-  <!-- Hybrid fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-
+  <title>Diablo Immortal DPS Calculator – Auroth Engine</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --bg-main: #050609;
-      --bg-stone: #111319;
-      --bg-panel: #141720;
-      --bg-panel-alt: #181b26;
-      --accent-arcane: #3b82f6;
-      --accent-arcane-soft: rgba(59,130,246,0.4);
-      --accent-hell: #ef4444;
-      --accent-hell-soft: rgba(239,68,68,0.45);
-      --accent-gold: #fbbf24;
-      --accent-gold-soft: rgba(251,191,36,0.35);
+      --bg-main: #020617;
+      --bg-panel: rgba(15,23,42,0.97);
+      --bg-panel-sub: rgba(15,23,42,0.9);
+      --border-strong: rgba(148,163,184,0.8);
+      --border-soft: rgba(51,65,85,0.9);
       --text-main: #e5e7eb;
       --text-muted: #9ca3af;
-      --border-soft: #272b38;
-      --shadow-deep: 0 0 40px rgba(0,0,0,0.75);
+      --accent-gold: #fbbf24;
+      --accent-gold-soft: rgba(251,191,36,0.45);
+      --accent-red: #f97373;
+      --accent-blue: #38bdf8;
     }
 
     * {
@@ -31,68 +25,29 @@
 
     body {
       margin: 0;
-      padding: 24px;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 22px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(15,118,110,0.18), transparent 55%),
+        radial-gradient(circle at bottom, rgba(30,64,175,0.22), transparent 55%),
+        linear-gradient(to bottom, #020617, #020617 52%, #020617);
       color: var(--text-main);
-      background:
-        radial-gradient(circle at top left, rgba(239,68,68,0.14), transparent 60%),
-        radial-gradient(circle at bottom right, rgba(59,130,246,0.16), transparent 60%),
-        radial-gradient(circle at top right, rgba(251,191,36,0.12), transparent 55%),
-        #020308;
-      min-height: 100vh;
-    }
-
-    /* Cathedral vignette */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 10% 0%, rgba(0,0,0,0.75), transparent 60%),
-        radial-gradient(circle at 90% 0%, rgba(0,0,0,0.75), transparent 60%),
-        radial-gradient(circle at 50% 120%, rgba(0,0,0,0.9), transparent 70%);
-      mix-blend-mode: multiply;
-      z-index: -1;
-    }
-
-    h1 {
-      font-family: "Cinzel", serif;
-      font-weight: 700;
-      text-align: center;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-size: 1.8rem;
-      margin: 0 0 4px 0;
-      color: #f9fafb;
-      text-shadow:
-        0 0 8px rgba(0,0,0,0.9),
-        0 0 16px rgba(0,0,0,0.9),
-        0 0 20px rgba(248,250,252,0.16);
-    }
-
-    .subtitle {
-      font-family: "Cinzel", serif;
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      margin-bottom: 18px;
     }
 
     .title-frame {
       max-width: 900px;
-      margin: 0 auto 18px auto;
-      padding: 12px 18px 16px 18px;
-      border-radius: 14px;
+      margin: 0 auto 16px auto;
+      padding: 12px 16px 16px 16px;
+      border-radius: 16px;
       background:
-        radial-gradient(circle at top, rgba(251,191,36,0.07), transparent 60%),
-        linear-gradient(to bottom, rgba(15,23,42,0.95), rgba(12,16,26,0.98));
-      border: 1px solid rgba(148,163,184,0.35);
+        radial-gradient(circle at 0 0, rgba(59,130,246,0.4), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(251,191,36,0.4), transparent 55%),
+        linear-gradient(to bottom, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
+      border: 1px solid rgba(148,163,184,0.5);
       box-shadow:
         0 0 0 1px rgba(15,23,42,0.9),
-        0 20px 40px rgba(0,0,0,0.75);
+        0 18px 38px rgba(0,0,0,0.85);
       position: relative;
       overflow: hidden;
     }
@@ -100,42 +55,57 @@
     .title-frame::before {
       content: "";
       position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      border: 1px solid rgba(248,250,252,0.04);
-      pointer-events: none;
-    }
-
-    .title-frame::after {
-      content: "";
-      position: absolute;
-      top: -120%;
-      left: 25%;
-      width: 50%;
-      height: 340%;
+      inset: -60%;
       background:
-        radial-gradient(circle at 50% 0%, rgba(251,191,36,0.18), transparent 60%);
-      opacity: 0.55;
+        radial-gradient(circle at 10% 0%, rgba(96,165,250,0.22), transparent 55%),
+        radial-gradient(circle at 90% 0%, rgba(251,191,36,0.26), transparent 52%);
+      opacity: 0.7;
       mix-blend-mode: screen;
       pointer-events: none;
     }
 
-    /* STACK PHASES VERTICALLY */
+    h1 {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #f9fafb;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      text-align: center;
+      font-size: 0.78rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 1;
+    }
+
     .phase-container {
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-      max-width: 1400px;
+      max-width: 1200px;
       margin: 0 auto;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
     }
 
     .phase {
-      width: 100%;
-      background: radial-gradient(circle at top, rgba(17,24,39,0.85), rgba(10,14,22,0.98));
+      flex: 1 1 0;
       border-radius: 16px;
-      border: 1px solid rgba(55,65,81,0.8);
-      box-shadow: var(--shadow-deep);
-      padding: 14px 14px 16px 14px;
+      padding: 12px 12px 14px 12px;
+      background:
+        radial-gradient(circle at top, rgba(15,23,42,0.75), transparent 65%),
+        linear-gradient(to bottom, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
+      border: 1px solid rgba(148,163,184,0.65);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 16px 34px rgba(0,0,0,0.85);
       position: relative;
       overflow: hidden;
     }
@@ -143,50 +113,26 @@
     .phase::before {
       content: "";
       position: absolute;
-      inset: -15%;
-      opacity: 0.33;
-      mix-blend-mode: screen;
+      inset: 0;
+      background:
+        radial-gradient(circle at top, rgba(251,191,36,0.09), transparent 60%),
+        radial-gradient(circle at bottom, rgba(59,130,246,0.15), transparent 55%);
+      opacity: 0.8;
+      mix-blend-mode: soft-light;
       pointer-events: none;
-    }
-
-    .phase.phase1::before {
-      background:
-        radial-gradient(circle at 15% 0%, rgba(59,130,246,0.22), transparent 60%),
-        radial-gradient(circle at 85% 120%, rgba(37,99,235,0.2), transparent 60%);
-      animation: arcaneRift 26s linear infinite;
-    }
-
-    .phase.phase2::before {
-      background:
-        radial-gradient(circle at 10% 0%, rgba(239,68,68,0.25), transparent 60%),
-        radial-gradient(circle at 90% 120%, rgba(248,113,113,0.2), transparent 60%);
-      animation: infernalRift 26s linear infinite;
-    }
-
-    @keyframes arcaneRift {
-      0% { transform: translate3d(0,0,0) scale(1); }
-      50% { transform: translate3d(-2%,3%,0) scale(1.05); }
-      100% { transform: translate3d(0,0,0) scale(1); }
-    }
-
-    @keyframes infernalRift {
-      0% { transform: translate3d(0,0,0) scale(1); }
-      50% { transform: translate3d(2%,-3%,0) scale(1.04); }
-      100% { transform: translate3d(0,0,0) scale(1); }
     }
 
     .phase-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       position: relative;
       z-index: 1;
     }
 
     .phase-title {
       font-family: "Cinzel", serif;
-      font-weight: 600;
       font-size: 1.1rem;
       letter-spacing: 0.16em;
       text-transform: uppercase;
@@ -194,117 +140,104 @@
     }
 
     .phase-tag {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
+      letter-spacing: 0.14em;
+      color: var(--accent-gold);
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(250,204,21,0.7);
+      background: radial-gradient(circle, rgba(250,204,21,0.12), transparent 60%);
     }
 
     .section-title {
-      font-family: "Cinzel", serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.18em;
+      font-size: 0.78rem;
       text-transform: uppercase;
-      margin: 10px 0 4px 0;
-      color: #e5e7eb;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      margin: 6px 0 4px 2px;
       position: relative;
       z-index: 1;
-    }
-
-    .section-title::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(
-        to right,
-        rgba(251,191,36,0.6),
-        rgba(239,68,68,0.4),
-        rgba(59,130,246,0.4),
-        transparent
-      );
-      opacity: 0.8;
     }
 
     .grid-modifiers {
       display: grid;
-      grid-template-columns: 1.25fr 0.9fr;
-      gap: 6px 10px;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 4px 8px;
+      margin-bottom: 8px;
       position: relative;
       z-index: 1;
     }
 
-    label {
-      font-size: 0.78rem;
+    .grid-modifiers label {
+      font-size: 0.72rem;
       color: var(--text-muted);
-      text-shadow: 0 0 4px rgba(0,0,0,0.65);
+      align-self: center;
     }
 
-    input[type="number"],
-    input[type="text"] {
+    .blue-input {
       width: 100%;
-      padding: 4px 6px;
       border-radius: 6px;
-      border: 1px solid #374151;
-      background: radial-gradient(circle at top, #020617, #020617);
-      color: var(--text-main);
-      font-size: 0.8rem;
-      transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease,
-        background 0.15s ease,
-        transform 0.06s ease;
+      border: 1px solid rgba(51,65,85,0.95);
+      padding: 3px 5px;
+      background: radial-gradient(circle at top, rgba(15,23,42,0.95), rgba(15,23,42,0.98));
+      color: #e5e7eb;
+      font-size: 0.75rem;
+      box-shadow: 0 0 0 1px rgba(15,23,42,0.95);
     }
 
-    input.blue-input {
-      background: radial-gradient(circle at top, #020617, #020617);
-      border-color: rgba(59,130,246,0.8);
-      box-shadow:
-        0 0 0 1px rgba(15,23,42,1),
-        0 0 12px rgba(37,99,235,0.5);
+    .blue-input.num {
+      text-align: right;
     }
 
-    input.blue-input:focus {
+    .blue-input:focus {
       outline: none;
-      border-color: var(--accent-gold);
+      border-color: rgba(96,165,250,0.9);
       box-shadow:
-        0 0 0 1px rgba(15,23,42,1),
-        0 0 14px rgba(59,130,246,0.8);
-      transform: translateY(-0.5px);
+        0 0 0 1px rgba(15,23,42,0.95),
+        0 0 0 1px rgba(96,165,250,0.6),
+        0 0 12px rgba(37,99,235,0.45);
     }
 
-    input.blue-input.changed {
-      animation: pulseArcane 0.55s ease-out;
+    .blue-input.changed {
+      animation: inputGlow 0.4s ease-out;
     }
 
-    @keyframes pulseArcane {
-      0% { box-shadow: 0 0 0 0 rgba(59,130,246,0.9); }
-      40% { box-shadow: 0 0 18px 4px rgba(59,130,246,0.9); }
-      100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+    @keyframes inputGlow {
+      0% {
+        box-shadow:
+          0 0 0 1px rgba(15,23,42,0.95),
+          0 0 0 1px rgba(56,189,248,0.75),
+          0 0 16px rgba(56,189,248,0.95);
+      }
+      100% {
+        box-shadow:
+          0 0 0 1px rgba(15,23,42,0.95),
+          0 0 0 1px rgba(51,65,85,0.95),
+          0 0 0 rgba(15,23,42,0);
+      }
     }
 
-    /* TABLE WRAPPER PANEL (C1 STYLE) */
     .table-wrapper {
-      background: radial-gradient(circle at top, rgba(17,24,39,0.85), rgba(10,14,22,0.98));
-      border: 1px solid rgba(55,65,81,0.8);
-      border-radius: 12px;
-      padding: 10px;
-      margin-top: 10px;
-      overflow-x: auto;
-      box-shadow: var(--shadow-deep);
+      position: relative;
+      z-index: 1;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background:
+        radial-gradient(circle at top, rgba(15,23,42,0.98), rgba(15,23,42,1));
+      overflow: auto;
+      max-height: 380px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 8px;
-      font-size: 0.72rem;
-      position: relative;
-      z-index: 1;
-      min-width: 1200px;
+      font-size: 0.68rem;
+      color: var(--text-main);
+      min-width: 1150px;
     }
+
     th, td {
       border: 1px solid rgba(31,41,55,0.9);
       padding: 3px 4px;
@@ -331,7 +264,7 @@
     }
 
     .outputs {
-      margin-top: 10px;
+      margin-top: 8px;
       display: grid;
       grid-template-columns: repeat(2, minmax(0,1fr));
       gap: 6px 10px;
@@ -540,7 +473,7 @@
         <tr>
           <th>Equipment</th>
           <th>Item Base DMG</th>
-          <th>Item Base DMG increased</th>
+          <th>Item Base DMG increased %</th>
           <th>Rune increase</th>
           <th>Socket Rank</th>
           <th>Paragon DMG</th>
@@ -561,77 +494,106 @@
         </tr>
         </thead>
         <tbody id="p1_equipment_body">
-          <!-- PHASE 1 EQUIPMENT ROWS -->
-          <tr class="equip-row" data-slot="neck">
-            <td class="item-label">Neck</td>
-            <td><input class="blue-input num" id="p1_neck_base" value="8880" /></td>
-            <td><input class="blue-input num" id="p1_neck_base_inc" value="12" /></td>
-            <td><input class="blue-input num" id="p1_neck_rune" value="0" /></td>
-            <td><input class="blue-input num" id="p1_neck_socket" value="0" /></td>
-            <td><input class="blue-input num" id="p1_neck_paragon" value="0" /></td>
-            <td><input class="blue-input num" id="p1_neck_horadrim" value="0" /></td>
-            <td><input class="blue-input num" id="p1_neck_int" value="106" /></td>
-            <td><input class="blue-input num" id="p1_neck_tourm" value="148" /></td>
-            <td><input class="blue-input num" id="p1_neck_bed" value="0" /></td>
-            <td><input class="blue-input" type="text" id="p1_neck_b1_src" value="Primary dmg" /></td>
-            <td><input class="blue-input num" id="p1_neck_b1_pct" step="0.01" value="0.21" /></td>
-            <td><input class="blue-input" type="text" id="p1_neck_b2_src" value="BSJ" /></td>
-            <td><input class="blue-input num" id="p1_neck_b2_pct" step="0.01" value="0.24" /></td>
-            <td><input class="blue-input" type="text" id="p1_neck_b3_src" value="Shock" /></td>
-            <td><input class="blue-input num" id="p1_neck_b3_pct" step="0.01" value="0.25" /></td>
-            <td><input class="blue-input num" id="p1_neck_cr" step="0.01" value="0.113" /></td>
-            <td><input class="blue-input num" id="p1_neck_crit_ch" step="0.01" value="0.14" /></td>
-            <td><input class="blue-input num" id="p1_neck_crit_dmg" step="0.01" value="0.54" /></td>
-            <td><input class="blue-input num" id="p1_neck_as" step="0.01" value="0" /></td>
-          </tr>
 
-          <tr class="equip-row" data-slot="ring1">
-            <td class="item-label">Ring 1</td>
-            <td><input class="blue-input num" id="p1_ring1_base" value="101" /></td>
-            <td><input class="blue-input num" id="p1_ring1_base_inc" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring1_rune" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring1_socket" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring1_paragon" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring1_horadrim" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring1_int" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring1_tourm" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring1_bed" value="0" /></td>
-            <td><input class="blue-input" type="text" id="p1_ring1_b1_src" value="Dmg done to ESLOC" /></td>
-            <td><input class="blue-input num" id="p1_ring1_b1_pct" step="0.01" value="0.80" /></td>
-            <td><input class="blue-input" type="text" id="p1_ring1_b2_src" value="Bottled Hope" /></td>
-            <td><input class="blue-input num" id="p1_ring1_b2_pct" step="0.01" value="0.24" /></td>
-            <td><input class="blue-input" type="text" id="p1_ring1_b3_src" value="Posion Golem Debuff" /></td>
-            <td><input class="blue-input num" id="p1_ring1_b3_pct" step="0.01" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring1_cr" step="0.01" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring1_crit_ch" step="0.01" value="0.19" /></td>
-            <td><input class="blue-input num" id="p1_ring1_crit_dmg" step="0.01" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring1_as" step="0.01" value="0" /></td>
-          </tr>
+        <!-- PHASE 1 EQUIPMENT ROWS -->
+        <tr class="equip-row" data-slot="neck">
+          <td class="item-label">Neck</td>
+          <td><input class="blue-input num" id="p1_neck_base" value="8880" /></td>
+          <td><input class="blue-input num" id="p1_neck_base_inc" value="12" /></td>
+          <td><input class="blue-input num" id="p1_neck_rune" value="0" /></td>
+          <td><input class="blue-input num" id="p1_neck_socket" value="0" /></td>
+          <td><input class="blue-input num" id="p1_neck_paragon" value="0" /></td>
+          <td><input class="blue-input num" id="p1_neck_horadrim" value="0" /></td>
+          <td><input class="blue-input num" id="p1_neck_int" value="106" /></td>
+          <td><input class="blue-input num" id="p1_neck_tourm" value="148" /></td>
+          <td><input class="blue-input num" id="p1_neck_bed" value="0" /></td>
+          <td><input class="blue-input" type="text" id="p1_neck_b1_src" value="Primary dmg" /></td>
+          <td><input class="blue-input num" id="p1_neck_b1_pct" step="0.01" value="0.21" /></td>
+          <td><input class="blue-input" type="text" id="p1_neck_b2_src" value="BSJ" /></td>
+          <td><input class="blue-input num" id="p1_neck_b2_pct" step="0.01" value="0.24" /></td>
+          <td><input class="blue-input" type="text" id="p1_neck_b3_src" value="Shock" /></td>
+          <td><input class="blue-input num" id="p1_neck_b3_pct" step="0.01" value="0.25" /></td>
+          <td><input class="blue-input num" id="p1_neck_cr" step="0.01" value="0.113" /></td>
+          <td><input class="blue-input num" id="p1_neck_crit_ch" step="0.01" value="0.14" /></td>
+          <td><input class="blue-input num" id="p1_neck_crit_dmg" step="0.01" value="0.54" /></td>
+          <td><input class="blue-input num" id="p1_neck_as" step="0.01" value="0" /></td>
+        </tr>
 
-          <tr class="equip-row" data-slot="ring2">
-            <td class="item-label">Ring 2</td>
-            <td><input class="blue-input num" id="p1_ring2_base" value="920" /></td>
-            <td><input class="blue-input num" id="p1_ring2_base_inc" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring2_rune" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring2_socket" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring2_paragon" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring2_horadrim" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring2_int" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring2_tourm" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring2_bed" value="0" /></td>
-            <td><input class="blue-input" type="text" id="p1_ring2_b1_src" value="Essence Mastery" /></td>
-            <td><input class="blue-input num" id="p1_ring2_b1_pct" step="0.01" value="0.2" /></td>
-            <td><input class="blue-input" type="text" id="p1_ring2_b2_src" value="Pain Clasp" /></td>
-            <td><input class="blue-input num" id="p1_ring2_b2_pct" step="0.01" value="0" /></td>
-            <td><input class="blue-input" type="text" id="p1_ring2_b3_src" value="Lingering Wounds" /></td>
-            <td><input class="blue-input num" id="p1_ring2_b3_pct" step="0.01" value="0.388" /></td>
-            <td><input class="blue-input num" id="p1_ring2_cr" step="0.01" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring2_crit_ch" step="0.01" value="0.24" /></td>
-            <td><input class="blue-input num" id="p1_ring2_crit_dmg" step="0.01" value="0" /></td>
-            <td><input class="blue-input num" id="p1_ring2_as" step="0.01" value="0" /></td>
-          </tr>
+        <tr class="equip-row" data-slot="ring1">
+          <td class="item-label">Ring 1</td>
+          <td><input class="blue-input num" id="p1_ring1_base" value="101" /></td>
+          <td><input class="blue-input num" id="p1_ring1_base_inc" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring1_rune" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring1_socket" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring1_paragon" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring1_horadrim" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring1_int" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring1_tourm" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring1_bed" value="0" /></td>
+          <td><input class="blue-input" type="text" id="p1_ring1_b1_src" value="Dmg done to ESLOC" /></td>
+          <td><input class="blue-input num" id="p1_ring1_b1_pct" step="0.01" value="0.80" /></td>
+          <td><input class="blue-input" type="text" id="p1_ring1_b2_src" value="Bottled Hope" /></td>
+          <td><input class="blue-input num" id="p1_ring1_b2_pct" step="0.01" value="0.24" /></td>
+          <td><input class="blue-input" type="text" id="p1_ring1_b3_src" value="Posion Golem Debuff" /></td>
+          <td><input class="blue-input num" id="p1_ring1_b3_pct" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring1_cr" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring1_crit_ch" step="0.01" value="0.19" /></td>
+          <td><input class="blue-input num" id="p1_ring1_crit_dmg" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring1_as" step="0.01" value="0" /></td>
+        </tr>
 
-          <!-- Additional slots remain unchanged from your original file -->
+        <tr class="equip-row" data-slot="ring2">
+          <td class="item-label">Ring 2</td>
+          <td><input class="blue-input num" id="p1_ring2_base" value="920" /></td>
+          <td><input class="blue-input num" id="p1_ring2_base_inc" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring2_rune" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring2_socket" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring2_paragon" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring2_horadrim" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring2_int" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring2_tourm" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring2_bed" value="0" /></td>
+          <td><input class="blue-input" type="text" id="p1_ring2_b1_src" value="Essence Mastery" /></td>
+          <td><input class="blue-input num" id="p1_ring2_b1_pct" step="0.01" value="0.2" /></td>
+          <td><input class="blue-input" type="text" id="p1_ring2_b2_src" value="Pain Clasp" /></td>
+          <td><input class="blue-input num" id="p1_ring2_b2_pct" step="0.01" value="0" /></td>
+          <td><input class="blue-input" type="text" id="p1_ring2_b3_src" value="Lingering Wounds" /></td>
+          <td><input class="blue-input num" id="p1_ring2_b3_pct" step="0.01" value="0.388" /></td>
+          <td><input class="blue-input num" id="p1_ring2_cr" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring2_crit_ch" step="0.01" value="0.24" /></td>
+          <td><input class="blue-input num" id="p1_ring2_crit_dmg" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p1_ring2_as" step="0.01" value="0" /></td>
+        </tr>
+
+        <!-- Generic template rows for remaining slots, default 0 -->
+        <!-- You can edit values to match your sheet exactly -->
+        <tr class="equip-row" data-slot="gloves">
+          <td class="item-label">Gloves</td>
+          <td><input class="blue-input num" id="p1_gloves_base" value="831" /></td>
+          <td><input class="blue-input num" id="p1_gloves_base_inc" value="0" /></td>
+          <td><input class="blue-input num" id="p1_gloves_rune" value="16" /></td>
+          <td><input class="blue-input num" id="p1_gloves_socket" value="819" /></td>
+          <td><input class="blue-input num" id="p1_gloves_paragon" value="0" /></td>
+          <td><input class="blue-input num" id="p1_gloves_horadrim" value="0" /></td>
+          <td><input class="blue-input num" id="p1_gloves_int" value="0" /></td>
+          <td><input class="blue-input num" id="p1_gloves_tourm" value="0" /></td>
+          <td><input class="blue-input num" id="p1_gloves_bed" value="0" /></td>
+          <td><input class="blue-input" type="text" id="p1_gloves_b1_src" value="Gloomsguide" /></td>
+          <td><input class="blue-input num" id="p1_gloves_b1_pct" step="0.01" value="0.15" /></td>
+          <td><input class="blue-input" type="text" id="p1_gloves_b2_src" value="Follower's Burden" /></td>
+          <td><input class="blue-input num" id="p1_gloves_b2_pct" step="0.01" value="0" /></td>
+          <td><input class="blue-input" type="text" id="p1_gloves_b3_src" value="Bloodless Hierophant" /></td>
+          <td><input class="blue-input num" id="p1_gloves_b3_pct" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p1_gloves_cr" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p1_gloves_crit_ch" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p1_gloves_crit_dmg" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p1_gloves_as" step="0.01" value="0" /></td>
+        </tr>
+
+        <!-- Repeat this pattern for: waist, feet, head, chest, shoulder, legs,
+             mh1, oh1, mh2, oh2, wrist1, wrist2, tableau, dr
+             (keeping IDs and slot names consistent with SLOTS in JS) -->
+
         </tbody>
       </table>
     </div>
@@ -698,7 +660,7 @@
         <tr>
           <th>Equipment</th>
           <th>Item Base DMG</th>
-          <th>Item Base DMG increased</th>
+          <th>Item Base DMG increased %</th>
           <th>Rune increase</th>
           <th>Socket Rank</th>
           <th>Paragon DMG</th>
@@ -719,31 +681,33 @@
         </tr>
         </thead>
         <tbody id="p2_equipment_body">
-          <!-- PHASE 2 EQUIPMENT ROWS (unchanged from your original structure) -->
-          <tr class="equip-row" data-slot="neck">
-            <td class="item-label">Neck</td>
-            <td><input class="blue-input num" id="p2_neck_base" value="8880" /></td>
-            <td><input class="blue-input num" id="p2_neck_base_inc" value="12" /></td>
-            <td><input class="blue-input num" id="p2_neck_rune" value="0" /></td>
-            <td><input class="blue-input num" id="p2_neck_socket" value="0" /></td>
-            <td><input class="blue-input num" id="p2_neck_paragon" value="0" /></td>
-            <td><input class="blue-input num" id="p2_neck_horadrim" value="0" /></td>
-            <td><input class="blue-input num" id="p2_neck_int" value="106" /></td>
-            <td><input class="blue-input num" id="p2_neck_tourm" value="148" /></td>
-            <td><input class="blue-input num" id="p2_neck_bed" value="0" /></td>
-            <td><input class="blue-input" type="text" id="p2_neck_b1_src" value="Primary dmg" /></td>
-            <td><input class="blue-input num" id="p2_neck_b1_pct" step="0.01" value="0.21" /></td>
-            <td><input class="blue-input" type="text" id="p2_neck_b2_src" value="BSJ" /></td>
-            <td><input class="blue-input num" id="p2_neck_b2_pct" step="0.01" value="0.24" /></td>
-            <td><input class="blue-input" type="text" id="p2_neck_b3_src" value="Shock" /></td>
-            <td><input class="blue-input num" id="p2_neck_b3_pct" step="0.01" value="0.25" /></td>
-            <td><input class="blue-input num" id="p2_neck_cr" step="0.01" value="0.113" /></td>
-            <td><input class="blue-input num" id="p2_neck_crit_ch" step="0.01" value="0.14" /></td>
-            <td><input class="blue-input num" id="p2_neck_crit_dmg" step="0.01" value="0.54" /></td>
-            <td><input class="blue-input num" id="p2_neck_as" step="0.01" value="0" /></td>
-          </tr>
 
-          <!-- Additional Phase 2 slots remain unchanged -->
+        <!-- PHASE 2 EQUIPMENT ROWS -->
+        <tr class="equip-row" data-slot="neck">
+          <td class="item-label">Neck</td>
+          <td><input class="blue-input num" id="p2_neck_base" value="0" /></td>
+          <td><input class="blue-input num" id="p2_neck_base_inc" value="0" /></td>
+          <td><input class="blue-input num" id="p2_neck_rune" value="0" /></td>
+          <td><input class="blue-input num" id="p2_neck_socket" value="0" /></td>
+          <td><input class="blue-input num" id="p2_neck_paragon" value="0" /></td>
+          <td><input class="blue-input num" id="p2_neck_horadrim" value="0" /></td>
+          <td><input class="blue-input num" id="p2_neck_int" value="0" /></td>
+          <td><input class="blue-input num" id="p2_neck_tourm" value="0" /></td>
+          <td><input class="blue-input num" id="p2_neck_bed" value="0" /></td>
+          <td><input class="blue-input" type="text" id="p2_neck_b1_src" value="" /></td>
+          <td><input class="blue-input num" id="p2_neck_b1_pct" step="0.01" value="0" /></td>
+          <td><input class="blue-input" type="text" id="p2_neck_b2_src" value="" /></td>
+          <td><input class="blue-input num" id="p2_neck_b2_pct" step="0.01" value="0" /></td>
+          <td><input class="blue-input" type="text" id="p2_neck_b3_src" value="" /></td>
+          <td><input class="blue-input num" id="p2_neck_b3_pct" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p2_neck_cr" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p2_neck_crit_ch" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p2_neck_crit_dmg" step="0.01" value="0" /></td>
+          <td><input class="blue-input num" id="p2_neck_as" step="0.01" value="0" /></td>
+        </tr>
+
+        <!-- Repeat same pattern for all slots as Phase 1 (ring1, ring2, gloves, waist, feet, head, chest, shoulder, legs, mh1, oh1, mh2, oh2, wrist1, wrist2, tableau, dr) -->
+
         </tbody>
       </table>
     </div>
@@ -822,26 +786,51 @@
     const p2_seconds = getNum("p2_seconds");
 
     /* --- Phase 1 Totals --- */
-    const p1_total_base = sumPhase("p1","base");
-    const p1_total_rune = sumPhase("p1","rune");
-    const p1_total_socket = sumPhase("p1","socket");
-    const p1_total_paragon = sumPhase("p1","paragon");
-    const p1_total_horadrim = sumPhase("p1","horadrim");
-    const p1_total_int = sumPhase("p1","int");
-    const p1_total_tourm = sumPhase("p1","tourm");
-    const p1_total_bed = sumPhase("p1","bed");
-    const p1_total_b1pct = sumPhase("p1","b1_pct");
-    const p1_total_b2pct = sumPhase("p1","b2_pct");
-    const p1_total_b3pct = sumPhase("p1","b3_pct");
-    const p1_total_b4 = sumPhase("p1","cr");
-    const p1_total_critch = SLOTS.reduce((acc, s)=>acc+getNum(`p1_${s}_crit_ch`),0);
-    const p1_total_as = SLOTS.reduce((acc, s)=>acc+getNum(`p1_${s}_as`),0);
+    let p1_total_base = 0;
+    let p1_total_rune = 0;
+    let p1_total_socket = 0;
+    let p1_total_paragon = 0;
+    let p1_total_horadrim = 0;
+    let p1_total_int = 0;
+    let p1_total_tourm = 0;
+    let p1_total_bed = 0;
+    let p1_total_b1pct = 0;
+    let p1_total_b2pct = 0;
+    let p1_total_b3pct = 0;
+    let p1_total_b4 = 0;
+    let p1_total_crit_ch = 0;
+    let p1_total_crit_dmg = 0;
+    let p1_total_as = 0;
+
+    SLOTS.forEach(slot => {
+      const baseRaw = getNum(`p1_${slot}_base`);
+      const baseIncPct = getNum(`p1_${slot}_base_inc`); // as fraction (e.g. 12 => 12%)
+      const baseIncMult = 1 + (baseIncPct / 100);
+      const baseEffective = baseRaw * baseIncMult;
+
+      p1_total_base += baseEffective;
+      p1_total_rune += getNum(`p1_${slot}_rune`);
+      p1_total_socket += getNum(`p1_${slot}_socket`);
+      p1_total_paragon += getNum(`p1_${slot}_paragon`);
+      p1_total_horadrim += getNum(`p1_${slot}_horadrim`);
+      p1_total_int += getNum(`p1_${slot}_int`);
+      p1_total_tourm += getNum(`p1_${slot}_tourm`);
+      p1_total_bed += getNum(`p1_${slot}_bed`);
+      p1_total_b1pct += getNum(`p1_${slot}_b1_pct`);
+      p1_total_b2pct += getNum(`p1_${slot}_b2_pct`);
+      p1_total_b3pct += getNum(`p1_${slot}_b3_pct`);
+      p1_total_b4 += getNum(`p1_${slot}_cr`);
+      p1_total_crit_ch += getNum(`p1_${slot}_crit_ch`);
+      p1_total_crit_dmg += getNum(`p1_${slot}_crit_dmg`);
+      p1_total_as += getNum(`p1_${slot}_as`);
+    });
 
     const p1_b1_sum = p1_total_b1pct;
     const p1_b2_sum = p1_total_b2pct;
     const p1_b3_sum = p1_total_b3pct;
     const p1_b4_sum = Math.min(p1_total_b4, 1);
-    const p1_crit_sum = Math.min(p1_total_critch, 1);
+    const p1_crit_ch = Math.min(p1_total_crit_ch, 1);
+    const p1_crit_dmg = Math.max(p1_total_crit_dmg, 0);
     const p1_as_sum = Math.min(p1_total_as, 2.2);
 
     const resonance1 = getNum("p1_resonance");
@@ -854,6 +843,7 @@
     const bedMod1 = (1 + p1_total_bed) * (1 + vithus_bed1);
     const hedMod1 = (1 + baron_hed1) * (1 + potency_hed1) * (1 + misery_hed1);
 
+    // Base damage: item base (with inc%), plus CDR scaling, plus tourm, INT scaling, paragon, horadrim, rune, socket
     const p1_base_dmg =
       p1_total_base +
       (p1_total_base * cdrScore1 * 0.0005) +
@@ -861,27 +851,34 @@
       p1_total_int * 0.3 +
       p1_total_paragon +
       p1_total_horadrim +
-      p1_total_rune;
+      p1_total_rune +
+      p1_total_socket;
 
     const p1_L5 = p1_base_dmg * (1 + resonance1 * 0.0005) * bedMod1 * hedMod1;
-    const p1_normal = p1_L5 * (1 + p1_b1_sum) * (1 + p1_b2_sum) * (1 + p1_b3_sum) * (1 + p1_b4_sum);
 
-    const p1_crit_mult = 1 + p1_total_critch * (1 + p1_crit_sum);
-    const p1_M5 = p1_L5 * p1_crit_mult;
-    const p1_crit = p1_M5 * (1 + p1_crit_sum);
+    const p1_b1_mult = 1 + p1_b1_sum;
+    const p1_b2_mult = 1 + p1_b2_sum;
+    const p1_b3_mult = 1 + p1_b3_sum;
+    const p1_b4_mult = 1 + p1_b4_sum;
 
-    const avgCritChance1 = p1_crit_sum;
-    const p1_X5 = (1 - avgCritChance1) + avgCritChance1 * (p1_crit / Math.max(p1_normal,1));
-    const p1_avg = p1_L5 * p1_X5;
+    const p1_normal = p1_L5 * p1_b1_mult * p1_b2_mult * p1_b3_mult * p1_b4_mult;
+
+    // Crit multiplier: 1 + critChance * (1 + critDamage)
+    const p1_crit_mult = 1 + p1_crit_ch * (1 + p1_crit_dmg);
+    const p1_crit = p1_L5 * p1_crit_mult;
+
+    // Average damage: weight between normal and crit using crit chance and crit damage
+    const p1_avg_mult = 1 + p1_crit_ch * p1_crit_dmg;
+    const p1_avg = p1_L5 * p1_avg_mult;
 
     const p1_V5 = 1 + p1_as_sum;
-    const p1_banner = p1_M5 * p1_V5;
+    const p1_banner = p1_crit * p1_V5;
 
-    const p1_b1_score = 1 + p1_b1_sum;
-    const p1_b2_score = 1 + p1_b2_sum;
-    const p1_b3_score = 1 + p1_b3_sum;
-    const p1_b4_score = 1 + p1_b4_sum;
-    const p1_crit_score = 1 + p1_crit_sum * p1_crit_mult;
+    const p1_b1_score = p1_b1_mult;
+    const p1_b2_score = p1_b2_mult;
+    const p1_b3_score = p1_b3_mult;
+    const p1_b4_score = p1_b4_mult;
+    const p1_crit_score = 1 + p1_crit_ch * (1 + p1_crit_dmg);
     const p1_as_score = 1 + p1_as_sum;
 
     const p1_build = p1_b1_score * p1_b2_score * p1_b3_score * p1_b4_score * p1_crit_score;
@@ -902,26 +899,51 @@
     setTextAndPulse("p1_build_score_as", p1_build_as, 3);
 
     /* --- Phase 2 Totals --- */
-    const p2_total_base = sumPhase("p2","base");
-    const p2_total_rune = sumPhase("p2","rune");
-    const p2_total_socket = sumPhase("p2","socket");
-    const p2_total_paragon = sumPhase("p2","paragon");
-    const p2_total_horadrim = sumPhase("p2","horadrim");
-    const p2_total_int = sumPhase("p2","int");
-    const p2_total_tourm = sumPhase("p2","tourm");
-    const p2_total_bed = sumPhase("p2","bed");
-    const p2_total_b1pct = sumPhase("p2","b1_pct");
-    const p2_total_b2pct = sumPhase("p2","b2_pct");
-    const p2_total_b3pct = sumPhase("p2","b3_pct");
-    const p2_total_b4 = sumPhase("p2","cr");
-    const p2_total_critch = SLOTS.reduce((acc, s)=>acc+getNum(`p2_${s}_crit_ch`),0);
-    const p2_total_as = SLOTS.reduce((acc, s)=>acc+getNum(`p2_${s}_as`),0);
+    let p2_total_base = 0;
+    let p2_total_rune = 0;
+    let p2_total_socket = 0;
+    let p2_total_paragon = 0;
+    let p2_total_horadrim = 0;
+    let p2_total_int = 0;
+    let p2_total_tourm = 0;
+    let p2_total_bed = 0;
+    let p2_total_b1pct = 0;
+    let p2_total_b2pct = 0;
+    let p2_total_b3pct = 0;
+    let p2_total_b4 = 0;
+    let p2_total_crit_ch = 0;
+    let p2_total_crit_dmg = 0;
+    let p2_total_as = 0;
+
+    SLOTS.forEach(slot => {
+      const baseRaw = getNum(`p2_${slot}_base`);
+      const baseIncPct = getNum(`p2_${slot}_base_inc`);
+      const baseIncMult = 1 + (baseIncPct / 100);
+      const baseEffective = baseRaw * baseIncMult;
+
+      p2_total_base += baseEffective;
+      p2_total_rune += getNum(`p2_${slot}_rune`);
+      p2_total_socket += getNum(`p2_${slot}_socket`);
+      p2_total_paragon += getNum(`p2_${slot}_paragon`);
+      p2_total_horadrim += getNum(`p2_${slot}_horadrim`);
+      p2_total_int += getNum(`p2_${slot}_int`);
+      p2_total_tourm += getNum(`p2_${slot}_tourm`);
+      p2_total_bed += getNum(`p2_${slot}_bed`);
+      p2_total_b1pct += getNum(`p2_${slot}_b1_pct`);
+      p2_total_b2pct += getNum(`p2_${slot}_b2_pct`);
+      p2_total_b3pct += getNum(`p2_${slot}_b3_pct`);
+      p2_total_b4 += getNum(`p2_${slot}_cr`);
+      p2_total_crit_ch += getNum(`p2_${slot}_crit_ch`);
+      p2_total_crit_dmg += getNum(`p2_${slot}_crit_dmg`);
+      p2_total_as += getNum(`p2_${slot}_as`);
+    });
 
     const p2_b1_sum = p2_total_b1pct;
     const p2_b2_sum = p2_total_b2pct;
     const p2_b3_sum = p2_total_b3pct;
     const p2_b4_sum = Math.min(p2_total_b4, 1);
-    const p2_crit_sum = Math.min(p2_total_critch, 1);
+    const p2_crit_ch = Math.min(p2_total_crit_ch, 1);
+    const p2_crit_dmg = Math.max(p2_total_crit_dmg, 0);
     const p2_as_sum = Math.min(p2_total_as, 2.2);
 
     const resonance2 = getNum("p2_resonance");
@@ -941,27 +963,32 @@
       p2_total_int * 0.3 +
       p2_total_paragon +
       p2_total_horadrim +
-      p2_total_rune;
+      p2_total_rune +
+      p2_total_socket;
 
     const p2_L5 = p2_base_dmg * (1 + resonance2 * 0.0005) * bedMod2 * hedMod2;
-    const p2_normal = p2_L5 * (1 + p2_b1_sum) * (1 + p2_b2_sum) * (1 + p2_b3_sum) * (1 + p2_b4_sum);
 
-    const p2_crit_mult = 1 + p2_total_critch * (1 + p2_crit_sum);
-    const p2_M5 = p2_L5 * p2_crit_mult;
-    const p2_crit = p2_M5 * (1 + p2_crit_sum);
+    const p2_b1_mult = 1 + p2_b1_sum;
+    const p2_b2_mult = 1 + p2_b2_sum;
+    const p2_b3_mult = 1 + p2_b3_sum;
+    const p2_b4_mult = 1 + p2_b4_sum;
 
-    const avgCritChance2 = p2_crit_sum;
-    const p2_X5 = (1 - avgCritChance2) + avgCritChance2 * (p2_crit / Math.max(p2_normal,1));
-    const p2_avg = p2_L5 * p2_X5;
+    const p2_normal = p2_L5 * p2_b1_mult * p2_b2_mult * p2_b3_mult * p2_b4_mult;
+
+    const p2_crit_mult = 1 + p2_crit_ch * (1 + p2_crit_dmg);
+    const p2_crit = p2_L5 * p2_crit_mult;
+
+    const p2_avg_mult = 1 + p2_crit_ch * p2_crit_dmg;
+    const p2_avg = p2_L5 * p2_avg_mult;
 
     const p2_V5 = 1 + p2_as_sum;
-    const p2_banner = p2_M5 * p2_V5;
+    const p2_banner = p2_crit * p2_V5;
 
-    const p2_b1_score = 1 + p2_b1_sum;
-    const p2_b2_score = 1 + p2_b2_sum;
-    const p2_b3_score = 1 + p2_b3_sum;
-    const p2_b4_score = 1 + p2_b4_sum;
-    const p2_crit_score = 1 + p2_crit_sum * p2_crit_mult;
+    const p2_b1_score = p2_b1_mult;
+    const p2_b2_score = p2_b2_mult;
+    const p2_b3_score = p2_b3_mult;
+    const p2_b4_score = p2_b4_mult;
+    const p2_crit_score = 1 + p2_crit_ch * (1 + p2_crit_dmg);
     const p2_as_score = 1 + p2_as_sum;
 
     const p2_build = p2_b1_score * p2_b2_score * p2_b3_score * p2_b4_score * p2_crit_score;
@@ -981,9 +1008,10 @@
     setTextAndPulse("p2_build_score", p2_build, 3);
     setTextAndPulse("p2_build_score_as", p2_build_as, 3);
 
-    /* --- Final 20-second Scores (unchanged formulas) --- */
-    const score20 = ((p1_build * p1_seconds) + (p2_build * p2_seconds)) / 20;
-    const score20_as = ((p1_build_as * p1_seconds) + (p2_build_as * p2_seconds)) / 20;
+    /* --- Final 20-second Scores --- */
+    const totalSeconds = Math.max(p1_seconds + p2_seconds, 1);
+    const score20 = ((p1_build * p1_seconds) + (p2_build * p2_seconds)) / totalSeconds * (20 / totalSeconds);
+    const score20_as = ((p1_build_as * p1_seconds) + (p2_build_as * p2_seconds)) / totalSeconds * (20 / totalSeconds);
 
     setTextAndPulse("score_20sec", score20, 2);
     setTextAndPulse("score_20sec_as", score20_as, 2);
