@@ -2,21 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Diablo Immortal DPS Calculator – Auroth Engine</title>
+  <title>Diablo Immortal DPS Calculator v2</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
     :root {
-      --bg-main: #020617;
-      --bg-panel: rgba(15,23,42,0.97);
-      --bg-panel-sub: rgba(15,23,42,0.9);
-      --border-strong: rgba(148,163,184,0.8);
-      --border-soft: rgba(51,65,85,0.9);
-      --text-main: #e5e7eb;
+      --bg: #020617;
+      --bg-alt: #020617;
+      --panel: #020617;
+      --panel-alt: #020617;
+      --border: #1f2937;
+      --accent: #fbbf24;
+      --accent-soft: rgba(251, 191, 36, 0.1);
+      --text: #e5e7eb;
       --text-muted: #9ca3af;
-      --accent-gold: #fbbf24;
-      --accent-gold-soft: rgba(251,191,36,0.45);
-      --accent-red: #f97373;
-      --accent-blue: #38bdf8;
+      --error: #f97373;
+      --blue-input: #1d4ed8;
     }
 
     * {
@@ -25,1016 +26,1454 @@
 
     body {
       margin: 0;
-      padding: 22px;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      background:
-        radial-gradient(circle at top, rgba(15,118,110,0.18), transparent 55%),
-        radial-gradient(circle at bottom, rgba(30,64,175,0.22), transparent 55%),
-        linear-gradient(to bottom, #020617, #020617 52%, #020617);
-      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 45%, #000 100%);
+      color: var(--text);
+      padding: 1.5rem;
     }
 
-    .title-frame {
-      max-width: 900px;
-      margin: 0 auto 16px auto;
-      padding: 12px 16px 16px 16px;
-      border-radius: 16px;
-      background:
-        radial-gradient(circle at 0 0, rgba(59,130,246,0.4), transparent 60%),
-        radial-gradient(circle at 100% 0, rgba(251,191,36,0.4), transparent 55%),
-        linear-gradient(to bottom, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
-      border: 1px solid rgba(148,163,184,0.5);
-      box-shadow:
-        0 0 0 1px rgba(15,23,42,0.9),
-        0 18px 38px rgba(0,0,0,0.85);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .title-frame::before {
-      content: "";
-      position: absolute;
-      inset: -60%;
-      background:
-        radial-gradient(circle at 10% 0%, rgba(96,165,250,0.22), transparent 55%),
-        radial-gradient(circle at 90% 0%, rgba(251,191,36,0.26), transparent 52%);
-      opacity: 0.7;
-      mix-blend-mode: screen;
-      pointer-events: none;
+    h1, h2, h3 {
+      margin: 0 0 0.5rem 0;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
     h1 {
-      margin: 0;
-      font-family: "Cinzel", serif;
-      font-size: 1.6rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #f9fafb;
+      font-size: 1.4rem;
       text-align: center;
-      position: relative;
-      z-index: 1;
     }
 
-    .subtitle {
-      margin-top: 4px;
-      text-align: center;
-      font-size: 0.78rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      position: relative;
-      z-index: 1;
+    h2 {
+      font-size: 1.1rem;
     }
 
-    .phase-container {
+    h3 {
+      font-size: 0.95rem;
+      color: var(--accent);
+    }
+
+    .container {
       max-width: 1200px;
       margin: 0 auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top left, #111827 0, #020617 40%, #000 100%);
+      padding: 1rem 1.25rem 1.5rem;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+    }
+
+    .title-sub {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    /* Phase tabs */
+    .tabs {
       display: flex;
-      gap: 14px;
-      align-items: flex-start;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 1rem;
     }
 
-    .phase {
-      flex: 1 1 0;
-      border-radius: 16px;
-      padding: 12px 12px 14px 12px;
-      background:
-        radial-gradient(circle at top, rgba(15,23,42,0.75), transparent 65%),
-        linear-gradient(to bottom, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
-      border: 1px solid rgba(148,163,184,0.65);
-      box-shadow:
-        0 0 0 1px rgba(15,23,42,0.9),
-        0 16px 34px rgba(0,0,0,0.85);
-      position: relative;
-      overflow: hidden;
+    .tab-button {
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 0.18s ease-out;
     }
 
-    .phase::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at top, rgba(251,191,36,0.09), transparent 60%),
-        radial-gradient(circle at bottom, rgba(59,130,246,0.15), transparent 55%);
-      opacity: 0.8;
-      mix-blend-mode: soft-light;
-      pointer-events: none;
+    .tab-button.active {
+      background: linear-gradient(90deg, #fbbf24, #f97316);
+      color: #020617;
+      border-color: #fbbf24;
+      box-shadow: 0 0 18px rgba(251,191,36,0.45);
     }
 
-    .phase-header {
+    .tab-button:hover:not(.active) {
+      border-color: #4b5563;
+      color: var(--text);
+    }
+
+    .phase-panel {
+      display: none;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .phase-panel.active {
+      display: grid;
+    }
+
+    @media (min-width: 900px) {
+      .phase-panel {
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+        align-items: flex-start;
+      }
+    }
+
+    /* Panels */
+    .panel {
+      background: rgba(15, 23, 42, 0.85);
+      border-radius: 10px;
+      border: 1px solid rgba(31,41,55,0.9);
+      padding: 0.75rem 0.9rem 0.85rem;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+    }
+
+    .panel-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 6px;
-      position: relative;
-      z-index: 1;
+      margin-bottom: 0.4rem;
     }
 
-    .phase-title {
-      font-family: "Cinzel", serif;
-      font-size: 1.1rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #f9fafb;
-    }
-
-    .phase-tag {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--accent-gold);
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(250,204,21,0.7);
-      background: radial-gradient(circle, rgba(250,204,21,0.12), transparent 60%);
-    }
-
-    .section-title {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-muted);
-      margin: 6px 0 4px 2px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .grid-modifiers {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 4px 8px;
-      margin-bottom: 8px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .grid-modifiers label {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      align-self: center;
-    }
-
-    .blue-input {
-      width: 100%;
-      border-radius: 6px;
-      border: 1px solid rgba(51,65,85,0.95);
-      padding: 3px 5px;
-      background: radial-gradient(circle at top, rgba(15,23,42,0.95), rgba(15,23,42,0.98));
-      color: #e5e7eb;
-      font-size: 0.75rem;
-      box-shadow: 0 0 0 1px rgba(15,23,42,0.95);
-    }
-
-    .blue-input.num {
-      text-align: right;
-    }
-
-    .blue-input:focus {
-      outline: none;
-      border-color: rgba(96,165,250,0.9);
-      box-shadow:
-        0 0 0 1px rgba(15,23,42,0.95),
-        0 0 0 1px rgba(96,165,250,0.6),
-        0 0 12px rgba(37,99,235,0.45);
-    }
-
-    .blue-input.changed {
-      animation: inputGlow 0.4s ease-out;
-    }
-
-    @keyframes inputGlow {
-      0% {
-        box-shadow:
-          0 0 0 1px rgba(15,23,42,0.95),
-          0 0 0 1px rgba(56,189,248,0.75),
-          0 0 16px rgba(56,189,248,0.95);
-      }
-      100% {
-        box-shadow:
-          0 0 0 1px rgba(15,23,42,0.95),
-          0 0 0 1px rgba(51,65,85,0.95),
-          0 0 0 rgba(15,23,42,0);
-      }
-    }
-
-    .table-wrapper {
-      position: relative;
-      z-index: 1;
-      margin-bottom: 6px;
-      border-radius: 10px;
-      border: 1px solid rgba(55,65,81,0.9);
-      background:
-        radial-gradient(circle at top, rgba(15,23,42,0.98), rgba(15,23,42,1));
-      overflow: auto;
-      max-height: 380px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.68rem;
-      color: var(--text-main);
-      min-width: 1150px;
-    }
-
-    th, td {
-      border: 1px solid rgba(31,41,55,0.9);
-      padding: 3px 4px;
-      text-align: center;
-    }
-
-    th {
-      background: linear-gradient(to bottom, rgba(15,23,42,0.95), rgba(15,23,42,0.9));
-      color: #e5e7eb;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .item-label {
-      text-align: left;
-      background: linear-gradient(to right, rgba(15,23,42,0.95), rgba(15,23,42,0.7));
-      font-weight: 500;
+    .panel-header small {
       font-size: 0.7rem;
+      color: var(--text-muted);
     }
 
-    tr.equip-row:hover {
-      background: radial-gradient(circle at center, rgba(251,191,36,0.06), transparent 55%);
+    .panel-divider {
+      height: 1px;
+      background: linear-gradient(90deg, rgba(148,163,184,0.5), rgba(15,23,42,0.5));
+      margin: 0.25rem 0 0.5rem;
     }
 
-    .outputs {
-      margin-top: 8px;
+    /* Form grid */
+    .form-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 6px 10px;
-      font-size: 0.8rem;
-      position: relative;
-      z-index: 1;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.4rem 0.75rem;
     }
 
-    .output-row {
+    @media (min-width: 768px) {
+      .form-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .field label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .field small {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    /* Tooltip inputs (B1 – hover input itself) */
+    .tooltip-input {
+      position: relative;
+      display: block;
+      width: 100%;
+    }
+
+    .tooltip-input input {
+      width: 100%;
+      padding: 0.25rem 0.4rem;
+      border-radius: 6px;
+      border: 1px solid #1f2937;
+      background: radial-gradient(circle at top, #0b1120 0, #020617 60%);
+      color: var(--text);
+      font-size: 0.8rem;
+      outline: none;
+      transition: all 0.18s ease-out;
+      box-shadow: inset 0 0 0 1px rgba(15,23,42,0.8);
+    }
+
+    .tooltip-input input.blue-input {
+      border-color: rgba(37,99,235,0.5);
+      box-shadow:
+        inset 0 0 0 1px rgba(37,99,235,0.5),
+        0 0 10px rgba(37,99,235,0.3);
+      background: radial-gradient(circle at top, #0b1120 0, #020617 60%);
+    }
+
+    .tooltip-input input:focus {
+      border-color: var(--accent);
+      box-shadow:
+        inset 0 0 0 1px rgba(251,191,36,0.7),
+        0 0 14px rgba(251,191,36,0.35);
+    }
+
+    .tooltip-input .tooltip-text {
+      visibility: hidden;
+      opacity: 0;
+      width: 260px;
+      background: rgba(15, 23, 42, 0.98);
+      color: #f9fafb;
+      text-align: left;
+      padding: 0.5rem 0.55rem;
+      border-radius: 8px;
+      border: 1px solid rgba(148,163,184,0.7);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.75);
+      position: absolute;
+      z-index: 999;
+      top: 110%;
+      left: 0;
+      transition: opacity 0.22s ease-out;
+      font-size: 0.72rem;
+      line-height: 1.15rem;
+      pointer-events: none;
+    }
+
+    .tooltip-input:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .tooltip-text strong {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* Equipment layout */
+    .equipment-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.4rem;
+      margin-top: 0.35rem;
+    }
+
+    @media (min-width: 900px) {
+      .equipment-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .equip-slot {
+      border-radius: 8px;
+      border: 1px solid rgba(31,41,55,0.9);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.9), rgba(15,23,42,0.85));
+      padding: 0.3rem 0.4rem 0.4rem;
+    }
+
+    .equip-slot-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 4px;
-      background: linear-gradient(to right, rgba(15,23,42,0.95), rgba(17,24,39,0.9));
-      border-radius: 6px;
-      padding: 3px 6px;
-      border: 1px solid rgba(55,65,81,0.9);
+      margin-bottom: 0.25rem;
     }
 
-    .output-row span.label {
+    .equip-slot-header span {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .equip-slot-header small {
+      font-size: 0.6rem;
       color: var(--text-muted);
     }
 
-    .output-row span.value {
-      min-width: 80px;
-      text-align: right;
+    .equip-slot-body {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.2rem 0.4rem;
+    }
+
+    .equip-field label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .equip-field .tooltip-input input {
+      font-size: 0.75rem;
+    }
+
+    /* Outputs */
+    .outputs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.35rem 0.6rem;
+      margin-top: 0.25rem;
+    }
+
+    @media (min-width: 768px) {
+      .outputs-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .output-field {
+      border-radius: 6px;
+      border: 1px solid rgba(31,41,55,0.9);
+      padding: 0.3rem 0.4rem;
+      background: radial-gradient(circle at top, rgba(15,23,42,0.9), rgba(15,23,42,0.8));
+      font-size: 0.78rem;
+    }
+
+    .output-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 0.1rem;
+    }
+
+    .output-value {
+      font-size: 0.82rem;
       font-weight: 600;
-      color: #f9fafb;
-      text-shadow:
-        0 0 6px rgba(0,0,0,0.9),
-        0 0 10px rgba(0,0,0,0.9);
+      color: var(--accent);
     }
 
-    .value.pulse {
-      animation: valuePulse 0.5s ease-out;
+    .output-note {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
     }
 
-    @keyframes valuePulse {
-      0% { color: #f9fafb; text-shadow: 0 0 4px rgba(251,191,36,0.2); }
-      25% { color: #fef9c3; text-shadow: 0 0 18px rgba(251,191,36,0.9); }
-      100% { color: #f9fafb; text-shadow: 0 0 6px rgba(0,0,0,0.9); }
-    }
-
-    .footer {
-      max-width: 900px;
-      margin: 18px auto 0 auto;
-      padding: 12px 16px 16px 16px;
-      border-radius: 14px;
-      background:
-        radial-gradient(circle at top, rgba(251,191,36,0.1), transparent 60%),
-        linear-gradient(to bottom, rgba(15,23,42,0.96), rgba(12,16,26,0.98));
-      border: 1px solid rgba(148,163,184,0.4);
-      box-shadow:
-        0 0 0 1px rgba(15,23,42,0.9),
-        0 18px 36px rgba(0,0,0,0.85);
-      display: flex;
-      justify-content: center;
-      gap: 46px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .footer::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 50% 0%, rgba(251,191,36,0.24), transparent 65%);
-      opacity: 0.5;
-      mix-blend-mode: screen;
-      pointer-events: none;
-    }
-
-    .footer-beam {
-      position: absolute;
-      inset: -40px 45%;
-      background:
-        linear-gradient(to bottom,
-          rgba(248,250,252,0.02),
-          rgba(251,191,36,0.5),
-          rgba(253,224,71,0.02)
-        );
-      filter: blur(1px);
-      opacity: 0.75;
-      mix-blend-mode: screen;
-      animation: legendaryBeam 3.4s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    @keyframes legendaryBeam {
-      0% { transform: translateY(10px) scaleY(0.9); opacity: 0.55; }
-      40% { transform: translateY(0) scaleY(1.1); opacity: 0.95; }
-      100% { transform: translateY(10px) scaleY(0.9); opacity: 0.55; }
-    }
-
-    .footer-block {
+    /* Footer hint */
+    .footer-note {
+      margin-top: 0.8rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
       text-align: center;
-      position: relative;
-      z-index: 1;
-    }
-
-    .footer-block span.label {
-      font-family: "Cinzel", serif;
-      font-size: 0.8rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #e5e7eb;
-    }
-
-    .footer-block span.value {
-      display: block;
-      font-size: 1.45rem;
-      font-weight: 700;
-      margin-top: 4px;
-      color: #fef9c3;
-      text-shadow:
-        0 0 10px rgba(0,0,0,0.95),
-        0 0 18px rgba(251,191,36,0.8);
-    }
-
-    .footer-block span.value.pulse {
-      animation: valuePulse 0.55s ease-out;
-    }
-
-    @media (max-width: 1100px) {
-      .phase-container {
-        flex-direction: column;
-      }
-    }
-
-    @media (max-width: 720px) {
-      body {
-        padding: 16px;
-      }
-      .title-frame {
-        padding: 10px 12px 14px 12px;
-      }
-      h1 {
-        font-size: 1.4rem;
-      }
-      .grid-modifiers {
-        grid-template-columns: 1.1fr 0.9fr;
-      }
-      .footer {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-      }
-      .footer-beam {
-        inset: -40px 35%;
-      }
     }
   </style>
 </head>
-
 <body>
-
-<div class="title-frame">
-  <h1>Diablo Immortal DPS Calculator</h1>
-  <div class="subtitle">Auroth damage engine · twin-phase rift analysis</div>
-</div>
-
-<div class="phase-container">
-
-  <!-- PHASE 1 -->
-  <div class="phase phase1" id="phase1">
-    <div class="phase-header">
-      <div class="phase-title">Phase I</div>
-      <div class="phase-tag">Arcane Rift Window</div>
+  <div class="container">
+    <h1>Diablo Immortal DPS Calculator</h1>
+    <div class="title-sub">
+      Phase 1 / Phase 2 damage engine & build scorer<br />
+      Inputs mirror blue cells from the spreadsheet. Tooltips explain where to find each stat.
     </div>
 
-    <div class="section-title">General modifiers</div>
-    <div class="grid-modifiers">
-      <label for="p1_seconds">1st phase (seconds)</label>
-      <input class="blue-input num" id="p1_seconds" type="number" step="0.01" value="20" />
-
-      <label for="p1_resonance">Resonance</label>
-      <input class="blue-input num" id="p1_resonance" type="number" step="1" value="1321" />
-
-      <label for="p1_bed_mod">BED modifier</label>
-      <input class="blue-input num" id="p1_bed_mod" type="number" step="0.01" value="1.0" />
-
-      <label for="p1_vithus_bed">Vithus BED</label>
-      <input class="blue-input num" id="p1_vithus_bed" type="number" step="0.01" value="0.30" />
-
-      <label for="p1_baron_hed">Baron HED</label>
-      <input class="blue-input num" id="p1_baron_hed" type="number" step="0.01" value="0.30" />
-
-      <label for="p1_potency_hed">Potency HED</label>
-      <input class="blue-input num" id="p1_potency_hed" type="number" step="0.01" value="0.35" />
-
-      <label for="p1_misery_hed">Misery Elixir HED</label>
-      <input class="blue-input num" id="p1_misery_hed" type="number" step="0.01" value="0.00" />
-
-      <label for="p1_hed_mod">HED Modifier</label>
-      <input class="blue-input num" id="p1_hed_mod" type="number" step="0.01" value="1.0" />
-
-      <label for="p1_cdr_score">CDR Score</label>
-      <input class="blue-input num" id="p1_cdr_score" type="number" step="0.01" value="1.43" />
+    <!-- Phase tabs -->
+    <div class="tabs">
+      <button class="tab-button active" data-phase="1">Phase 1 – Arcane Rift</button>
+      <button class="tab-button" data-phase="2">Phase 2 – Infernal Rift</button>
     </div>
 
-    <div class="section-title">Equipment</div>
-    <div class="table-wrapper">
-      <table>
-        <thead>
-        <tr>
-          <th>Equipment</th>
-          <th>Item Base DMG</th>
-          <th>Item Base DMG increased %</th>
-          <th>Rune increase</th>
-          <th>Socket Rank</th>
-          <th>Paragon DMG</th>
-          <th>Horadrim</th>
-          <th>Intelligence</th>
-          <th>Tourmaline</th>
-          <th>BED</th>
-          <th>Dmg Mod (B1)</th>
-          <th>B1 %</th>
-          <th>Leg Gems (B2)</th>
-          <th>B2 %</th>
-          <th>Buff/Debuff (B3)</th>
-          <th>B3 %</th>
-          <th>CR (B4)</th>
-          <th>Crit Chance</th>
-          <th>Crit Damage</th>
-          <th>Attack Speed</th>
-        </tr>
-        </thead>
-        <tbody id="p1_equipment_body">
+    <!-- Phase 1 panel -->
+    <div id="phase-1" class="phase-panel active">
+      <div>
+        <!-- General modifiers -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Phase 1 – General window & modifiers</h2>
+            <small>Arcane Rift window, 1st phase</small>
+          </div>
+          <div class="panel-divider"></div>
 
-        <!-- PHASE 1 EQUIPMENT ROWS -->
-        <tr class="equip-row" data-slot="neck">
-          <td class="item-label">Neck</td>
-          <td><input class="blue-input num" id="p1_neck_base" value="8880" /></td>
-          <td><input class="blue-input num" id="p1_neck_base_inc" value="12" /></td>
-          <td><input class="blue-input num" id="p1_neck_rune" value="0" /></td>
-          <td><input class="blue-input num" id="p1_neck_socket" value="0" /></td>
-          <td><input class="blue-input num" id="p1_neck_paragon" value="0" /></td>
-          <td><input class="blue-input num" id="p1_neck_horadrim" value="0" /></td>
-          <td><input class="blue-input num" id="p1_neck_int" value="106" /></td>
-          <td><input class="blue-input num" id="p1_neck_tourm" value="148" /></td>
-          <td><input class="blue-input num" id="p1_neck_bed" value="0" /></td>
-          <td><input class="blue-input" type="text" id="p1_neck_b1_src" value="Primary dmg" /></td>
-          <td><input class="blue-input num" id="p1_neck_b1_pct" step="0.01" value="0.21" /></td>
-          <td><input class="blue-input" type="text" id="p1_neck_b2_src" value="BSJ" /></td>
-          <td><input class="blue-input num" id="p1_neck_b2_pct" step="0.01" value="0.24" /></td>
-          <td><input class="blue-input" type="text" id="p1_neck_b3_src" value="Shock" /></td>
-          <td><input class="blue-input num" id="p1_neck_b3_pct" step="0.01" value="0.25" /></td>
-          <td><input class="blue-input num" id="p1_neck_cr" step="0.01" value="0.113" /></td>
-          <td><input class="blue-input num" id="p1_neck_crit_ch" step="0.01" value="0.14" /></td>
-          <td><input class="blue-input num" id="p1_neck_crit_dmg" step="0.01" value="0.54" /></td>
-          <td><input class="blue-input num" id="p1_neck_as" step="0.01" value="0" /></td>
-        </tr>
+          <div class="form-grid">
+            <!-- 1st phase (seconds) -->
+            <div class="field">
+              <label>1st phase (seconds)</label>
+              <div class="tooltip-input">
+                <input id="p1_duration" type="number" step="0.01" class="blue-input" value="11.54" />
+                <span class="tooltip-text">
+                  <strong>Phase 1 duration</strong><br />
+                  Length of your first damage window in seconds.<br />
+                  Use the duration defined in your spreadsheet or Auroth's rotation window for Arcane Rift.
+                </span>
+              </div>
+            </div>
 
-        <tr class="equip-row" data-slot="ring1">
-          <td class="item-label">Ring 1</td>
-          <td><input class="blue-input num" id="p1_ring1_base" value="101" /></td>
-          <td><input class="blue-input num" id="p1_ring1_base_inc" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring1_rune" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring1_socket" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring1_paragon" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring1_horadrim" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring1_int" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring1_tourm" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring1_bed" value="0" /></td>
-          <td><input class="blue-input" type="text" id="p1_ring1_b1_src" value="Dmg done to ESLOC" /></td>
-          <td><input class="blue-input num" id="p1_ring1_b1_pct" step="0.01" value="0.80" /></td>
-          <td><input class="blue-input" type="text" id="p1_ring1_b2_src" value="Bottled Hope" /></td>
-          <td><input class="blue-input num" id="p1_ring1_b2_pct" step="0.01" value="0.24" /></td>
-          <td><input class="blue-input" type="text" id="p1_ring1_b3_src" value="Posion Golem Debuff" /></td>
-          <td><input class="blue-input num" id="p1_ring1_b3_pct" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring1_cr" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring1_crit_ch" step="0.01" value="0.19" /></td>
-          <td><input class="blue-input num" id="p1_ring1_crit_dmg" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring1_as" step="0.01" value="0" /></td>
-        </tr>
+            <!-- Resonance -->
+            <div class="field">
+              <label>Resonance</label>
+              <div class="tooltip-input">
+                <input id="p1_resonance" type="number" step="1" class="blue-input" value="1121" />
+                <span class="tooltip-text">
+                  <strong>Resonance (Phase 1)</strong><br />
+                  Total resonance from your currently equipped legendary gems and awakenings.<br />
+                  Found on your character sheet. Use your <em>current</em> build, not planned gear.<br />
+                  Matches the Resonance value used in your spreadsheet for Phase 1.
+                </span>
+              </div>
+            </div>
 
-        <tr class="equip-row" data-slot="ring2">
-          <td class="item-label">Ring 2</td>
-          <td><input class="blue-input num" id="p1_ring2_base" value="920" /></td>
-          <td><input class="blue-input num" id="p1_ring2_base_inc" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring2_rune" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring2_socket" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring2_paragon" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring2_horadrim" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring2_int" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring2_tourm" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring2_bed" value="0" /></td>
-          <td><input class="blue-input" type="text" id="p1_ring2_b1_src" value="Essence Mastery" /></td>
-          <td><input class="blue-input num" id="p1_ring2_b1_pct" step="0.01" value="0.2" /></td>
-          <td><input class="blue-input" type="text" id="p1_ring2_b2_src" value="Pain Clasp" /></td>
-          <td><input class="blue-input num" id="p1_ring2_b2_pct" step="0.01" value="0" /></td>
-          <td><input class="blue-input" type="text" id="p1_ring2_b3_src" value="Lingering Wounds" /></td>
-          <td><input class="blue-input num" id="p1_ring2_b3_pct" step="0.01" value="0.388" /></td>
-          <td><input class="blue-input num" id="p1_ring2_cr" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring2_crit_ch" step="0.01" value="0.24" /></td>
-          <td><input class="blue-input num" id="p1_ring2_crit_dmg" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p1_ring2_as" step="0.01" value="0" /></td>
-        </tr>
+            <!-- BED modifier -->
+            <div class="field">
+              <label>BED modifier</label>
+              <div class="tooltip-input">
+                <input id="p1_bed" type="number" step="0.01" class="blue-input" value="1.0" />
+                <span class="tooltip-text">
+                  <strong>BED – Bonus Effect Damage modifier</strong><br />
+                  Additive damage bucket for general damage bonuses:<br />
+                  Primary Damage %, Skill Damage %, set bonuses, and some gem effects.<br />
+                  Use the same total BED value (as a multiplier) that your Phase 1 sheet uses.
+                </span>
+              </div>
+            </div>
 
-        <!-- Generic template rows for remaining slots, default 0 -->
-        <!-- You can edit values to match your sheet exactly -->
-        <tr class="equip-row" data-slot="gloves">
-          <td class="item-label">Gloves</td>
-          <td><input class="blue-input num" id="p1_gloves_base" value="831" /></td>
-          <td><input class="blue-input num" id="p1_gloves_base_inc" value="0" /></td>
-          <td><input class="blue-input num" id="p1_gloves_rune" value="16" /></td>
-          <td><input class="blue-input num" id="p1_gloves_socket" value="819" /></td>
-          <td><input class="blue-input num" id="p1_gloves_paragon" value="0" /></td>
-          <td><input class="blue-input num" id="p1_gloves_horadrim" value="0" /></td>
-          <td><input class="blue-input num" id="p1_gloves_int" value="0" /></td>
-          <td><input class="blue-input num" id="p1_gloves_tourm" value="0" /></td>
-          <td><input class="blue-input num" id="p1_gloves_bed" value="0" /></td>
-          <td><input class="blue-input" type="text" id="p1_gloves_b1_src" value="Gloomsguide" /></td>
-          <td><input class="blue-input num" id="p1_gloves_b1_pct" step="0.01" value="0.15" /></td>
-          <td><input class="blue-input" type="text" id="p1_gloves_b2_src" value="Follower's Burden" /></td>
-          <td><input class="blue-input num" id="p1_gloves_b2_pct" step="0.01" value="0" /></td>
-          <td><input class="blue-input" type="text" id="p1_gloves_b3_src" value="Bloodless Hierophant" /></td>
-          <td><input class="blue-input num" id="p1_gloves_b3_pct" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p1_gloves_cr" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p1_gloves_crit_ch" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p1_gloves_crit_dmg" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p1_gloves_as" step="0.01" value="0" /></td>
-        </tr>
+            <!-- Vithus BED -->
+            <div class="field">
+              <label>Vithus BED</label>
+              <div class="tooltip-input">
+                <input id="p1_vithus_bed" type="number" step="0.01" class="blue-input" value="0.30" />
+                <span class="tooltip-text">
+                  <strong>Vithu's Urge bonus damage</strong><br />
+                  Additional BED from the Vithu's set during active uptime.<br />
+                  Enter as a decimal (0.30 = 30%). Mirror the value in your Phase 1 sheet.
+                </span>
+              </div>
+            </div>
 
-        <!-- Repeat this pattern for: waist, feet, head, chest, shoulder, legs,
-             mh1, oh1, mh2, oh2, wrist1, wrist2, tableau, dr
-             (keeping IDs and slot names consistent with SLOTS in JS) -->
+            <!-- Baron HED -->
+            <div class="field">
+              <label>Baron HED</label>
+              <div class="tooltip-input">
+                <input id="p1_baron_hed" type="number" step="0.01" class="blue-input" value="0.30" />
+                <span class="tooltip-text">
+                  <strong>Baron – Heroic Effect Damage</strong><br />
+                  HED contribution from the Baron set. Enter as a decimal (0.30 = 30%).<br />
+                  Use the same value that feeds into your HED bucket in the sheet.
+                </span>
+              </div>
+            </div>
 
-        </tbody>
-      </table>
+            <!-- Potency HED -->
+            <div class="field">
+              <label>Potency HED</label>
+              <div class="tooltip-input">
+                <input id="p1_potency_hed" type="number" step="0.01" class="blue-input" value="0.35" />
+                <span class="tooltip-text">
+                  <strong>Potency-based Heroic Effect Damage</strong><br />
+                  HED from Potency scaling. Enter the effective multiplier from your sheet as a decimal.<br />
+                  This reflects the Potency vs Willpower interaction in Auroth's damage bucket breakdown.
+                </span>
+              </div>
+            </div>
+
+            <!-- Misery Elixir HED -->
+            <div class="field">
+              <label>Misery Elixir HED</label>
+              <div class="tooltip-input">
+                <input id="p1_misery_hed" type="number" step="0.01" class="blue-input" value="0.00" />
+                <span class="tooltip-text">
+                  <strong>Misery Elixir Heroic Damage</strong><br />
+                  Temporary HED bonus from Misery Elixir. Enter as decimal (0.20 = 20%).<br />
+                  Use 0 if not active in this phase, matching your sheet.
+                </span>
+              </div>
+            </div>
+
+            <!-- HED modifier -->
+            <div class="field">
+              <label>HED Modifier (auto)</label>
+              <div class="tooltip-input">
+                <input id="p1_hed_modifier" type="number" step="0.001" value="1.0" disabled />
+                <span class="tooltip-text">
+                  <strong>Heroic Effect Damage modifier</strong><br />
+                  Combined HED multiplier based on Baron, Potency, and Misery values.<br />
+                  In your sheet this is typically (1 + Baron) × (1 + Potency) × (1 + Misery).<br />
+                  This field is auto-calculated by the calculator.
+                </span>
+              </div>
+              <small>Auto: (1 + Baron) × (1 + Potency) × (1 + Misery)</small>
+            </div>
+
+            <!-- CDR Score -->
+            <div class="field">
+              <label>CDR Score</label>
+              <div class="tooltip-input">
+                <input id="p1_cdr" type="number" step="0.01" class="blue-input" value="1.43" />
+                <span class="tooltip-text">
+                  <strong>Cooldown Reduction score</strong><br />
+                  Effective multiplier for how CDR improves damage uptime.<br />
+                  Use the exact CDR score from your Phase 1 spreadsheet for parity.
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Equipment -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Phase 1 – Equipment & stats</h2>
+            <small>Only blue cells from the spreadsheet are inputs</small>
+          </div>
+          <div class="panel-divider"></div>
+
+          <div class="equipment-grid">
+            <!-- Example slot: Neck -->
+            <div class="equip-slot">
+              <div class="equip-slot-header">
+                <span>Neck</span>
+                <small>Totals for this item</small>
+              </div>
+              <div class="equip-slot-body">
+                <div class="equip-field">
+                  <label>Item Base DMG</label>
+                  <div class="tooltip-input">
+                    <input id="p1_neck_base" type="number" class="blue-input" value="0" />
+                    <span class="tooltip-text">
+                      <strong>Neck – Item Base Damage</strong><br />
+                      Use the base damage value printed on the necklace item tooltip.<br />
+                      This should match the blue input cell for Neck Base DMG in your Phase 1 sheet.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Base DMG %</label>
+                  <div class="tooltip-input">
+                    <input id="p1_neck_base_pct" type="number" step="0.01" class="blue-input" value="0" />
+                    <span class="tooltip-text">
+                      <strong>Neck – Base Damage % increase</strong><br />
+                      Any explicit "% base damage" for this item. Enter as whole percent (12 = 12%).<br />
+                      Mirror the blue input for Neck Base DMG Increased in your sheet.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Rune Increase</label>
+                  <div class="tooltip-input">
+                    <input id="p1_neck_rune" type="number" class="blue-input" value="0" />
+                    <span class="tooltip-text">
+                      <strong>Neck – Rune Increase</strong><br />
+                      Flat damage gained from runes slotted into this item.<br />
+                      Copy the value from your spreadsheet's Neck Rune cell.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Socket Rank</label>
+                  <div class="tooltip-input">
+                    <input id="p1_neck_socket" type="number" class="blue-input" value="0" />
+                    <span class="tooltip-text">
+                      <strong>Neck – Socket rank contribution</strong><br />
+                      Total gem rank level in this item's sockets for damage-relevant gems.<br />
+                      Reflects the same value as your Neck Socket Rank blue cell.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Paragon DMG</label>
+                  <div class="tooltip-input">
+                    <input id="p1_neck_paragon" type="number" class="blue-input" value="0" />
+                    <span class="tooltip-text">
+                      <strong>Neck – Paragon Damage</strong><br />
+                      Flat damage from Paragon nodes attributed to this slot (if your sheet splits that way).<br />
+                      If your sheet uses global Paragon only, leave this 0.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Horadrim</label>
+                  <div class="tooltip-input">
+                    <input id="p1_neck_horadrim" type="number" class="blue-input" value="0" />
+                    <span class="tooltip-text">
+                      <strong>Neck – Horadrim Vessel contribution</strong><br />
+                      Flat damage bonus from Horadrim tied to this slot, if your sheet tracks it per item.<br />
+                      Otherwise, leave this 0 and use a more global field later.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Intelligence</label>
+                  <div class="tooltip-input">
+                    <input id="p1_neck_int" type="number" class="blue-input" value="0" />
+                    <span class="tooltip-text">
+                      <strong>Neck – Intelligence</strong><br />
+                      Intelligence stat shown on the item. This will be converted to damage using your sheet's formula.<br />
+                      Matches the blue Intelligence cell for this slot.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Tourmaline</label>
+                  <div class="tooltip-input">
+                    <input id="p1_neck_tourm" type="number" class="blue-input" value="0" />
+                    <span class="tooltip-text">
+                      <strong>Neck – Tourmaline damage</strong><br />
+                      Flat damage granted by Tourmaline gems in this slot, if tracked separately.<br />
+                      Use the same value as the Neck Tourmaline blue cell.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- You can duplicate the slot structure below for other items: Ring1, Ring2, Gloves, etc. -->
+            <!-- For now, provide aggregate fields to keep this v2 manageable but structured. -->
+
+            <div class="equip-slot">
+              <div class="equip-slot-header">
+                <span>Phase 1 totals</span>
+                <small>Global equipment totals</small>
+              </div>
+              <div class="equip-slot-body">
+                <div class="equip-field">
+                  <label>Total Item Base DMG</label>
+                  <div class="tooltip-input">
+                    <input id="p1_total_base" type="number" class="blue-input" value="7105" />
+                    <span class="tooltip-text">
+                      <strong>Total Item Base Damage (Phase 1)</strong><br />
+                      Sum of base damage from all equipped items used in Phase 1.<br />
+                      This should match the total Item Base DMG cell in your sheet (e.g., 7105).
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Total Rune Increase</label>
+                  <div class="tooltip-input">
+                    <input id="p1_total_rune" type="number" class="blue-input" value="342" />
+                    <span class="tooltip-text">
+                      <strong>Total Rune Increase</strong><br />
+                      Sum of all rune-based flat damage bonuses for Phase 1 equipment.<br />
+                      Mirror the total rune damage cell from your spreadsheet.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Total Socket Rank</label>
+                  <div class="tooltip-input">
+                    <input id="p1_total_socket" type="number" class="blue-input" value="16" />
+                    <span class="tooltip-text">
+                      <strong>Total Socket Rank</strong><br />
+                      Aggregate socket rank contribution (e.g., 16) from all relevant gems.<br />
+                      Use the same total as in your Phase 1 socket rank cell.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Paragon DMG total</label>
+                  <div class="tooltip-input">
+                    <input id="p1_total_paragon" type="number" class="blue-input" value="8800" />
+                    <span class="tooltip-text">
+                      <strong>Total Paragon Damage</strong><br />
+                      Flat damage from Paragon that contributes to Phase 1 damage.<br />
+                      Use the total Paragon DMG value used in your spreadsheet.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Horadrim total</label>
+                  <div class="tooltip-input">
+                    <input id="p1_total_horadrim" type="number" class="blue-input" value="12" />
+                    <span class="tooltip-text">
+                      <strong>Total Horadrim damage</strong><br />
+                      Combined flat damage from Horadrim vessels for Phase 1.<br />
+                      Match the total used in your sheet (e.g., 12).
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Total Intelligence</label>
+                  <div class="tooltip-input">
+                    <input id="p1_total_int" type="number" class="blue-input" value="1002" />
+                    <span class="tooltip-text">
+                      <strong>Total Intelligence (Phase 1)</strong><br />
+                      Sum of Intelligence from all relevant sources used in the sheet for Phase 1.<br />
+                      Copy this from your Phase 1 total INT cell.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Total Tourmaline</label>
+                  <div class="tooltip-input">
+                    <input id="p1_total_tourm" type="number" class="blue-input" value="572" />
+                    <span class="tooltip-text">
+                      <strong>Total Tourmaline damage</strong><br />
+                      Sum of flat damage from all Tourmaline gems contributing to Phase 1.<br />
+                      Reflect the total value from your spreadsheet.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>DMG Modifiers %</label>
+                  <div class="tooltip-input">
+                    <input id="p1_dmg_mod_pct" type="number" step="0.01" class="blue-input" value="48" />
+                    <span class="tooltip-text">
+                      <strong>Total Damage Modifiers %</strong><br />
+                      Combined "% increased damage" effects for Phase 1 not already captured in BED fields.<br />
+                      Enter as whole percent (48 = 48%), matching the sheet.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="equip-slot">
+              <div class="equip-slot-header">
+                <span>Buckets & crit</span>
+                <small>B1–B4 & crit scores</small>
+              </div>
+              <div class="equip-slot-body">
+                <div class="equip-field">
+                  <label>B1 (General/BED) score</label>
+                  <div class="tooltip-input">
+                    <input id="p1_b1" type="number" step="0.001" class="blue-input" value="1.0" />
+                    <span class="tooltip-text">
+                      <strong>B1 – General / BED bucket</strong><br />
+                      Combined BED-like multiplier from general damage bonuses (primary, skill, sets, etc.).<br />
+                      If your sheet gives a B1 score number, put that exact value here.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>B2 (Legendary Gems) score</label>
+                  <div class="tooltip-input">
+                    <input id="p1_b2" type="number" step="0.001" class="blue-input" value="1.0" />
+                    <span class="tooltip-text">
+                      <strong>B2 – Legendary Gems</strong><br />
+                      Damage bucket for legendary gem contributions.<br />
+                      Use the same B2 score value your sheet outputs for Phase 1.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>B3 (Buff/Debuff) score</label>
+                  <div class="tooltip-input">
+                    <input id="p1_b3" type="number" step="0.001" class="blue-input" value="1.0" />
+                    <span class="tooltip-text">
+                      <strong>B3 – Buffs & Debuffs</strong><br />
+                      Bucket for effects such as Shock, Lingering Wounds, Poison Golem debuff, etc.<br />
+                      Mirror the B3 score from your sheet.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>B4 (Combat Rating) score</label>
+                  <div class="tooltip-input">
+                    <input id="p1_b4" type="number" step="0.001" class="blue-input" value="1.0" />
+                    <span class="tooltip-text">
+                      <strong>B4 – Combat Rating bucket</strong><br />
+                      Multiplier or score derived from CR difference vs content level.<br />
+                      Use the B4 score your sheet calculates.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Crit Chance score</label>
+                  <div class="tooltip-input">
+                    <input id="p1_crit_chance" type="number" step="0.01" class="blue-input" value="3.82" />
+                    <span class="tooltip-text">
+                      <strong>Crit chance (Phase 1)</strong><br />
+                      Effective critical hit chance as a percent (3.82 = 3.82%).<br />
+                      Use the exact crit chance cell value from your sheet.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Crit Damage score</label>
+                  <div class="tooltip-input">
+                    <input id="p1_crit_dmg" type="number" step="0.01" class="blue-input" value="30.12" />
+                    <span class="tooltip-text">
+                      <strong>Crit damage (Phase 1)</strong><br />
+                      Effective crit damage bonus as a percent. Use the value from your sheet.<br />
+                      This will be used to compute the crit score.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Crit score (auto)</label>
+                  <div class="tooltip-input">
+                    <input id="p1_crit_score" type="number" step="0.001" value="1.0" disabled />
+                    <span class="tooltip-text">
+                      <strong>Crit score</strong><br />
+                      Derived metric combining crit chance and crit damage into a single multiplicative factor.<br />
+                      JS logic can be updated to match your sheet’s crit formula exactly.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>AS score</label>
+                  <div class="tooltip-input">
+                    <input id="p1_as_score" type="number" step="0.01" class="blue-input" value="22" />
+                    <span class="tooltip-text">
+                      <strong>Attack speed score</strong><br />
+                      Effective attack speed bonus as percent (22 = 22%) or a precomputed score from your sheet.<br />
+                      This will feed into the Build Score with AS calculation.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Outputs column -->
+      <div>
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Phase 1 – Outputs</h2>
+            <small>Matches Phase 1 outputs in the spreadsheet</small>
+          </div>
+          <div class="panel-divider"></div>
+
+          <div class="outputs-grid">
+            <div class="output-field">
+              <div class="output-label">Base DMG</div>
+              <div id="p1_base_dmg" class="output-value">0</div>
+              <div class="output-note">Aggregated base damage before buckets and crit.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">Normal DMG</div>
+              <div id="p1_normal_dmg" class="output-value">0</div>
+              <div class="output-note">Non-crit damage after all multipliers.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">Crit DMG</div>
+              <div id="p1_crit_dmg_out" class="output-value">0</div>
+              <div class="output-note">Critical damage for comparison.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">Avg. DMG</div>
+              <div id="p1_avg_dmg" class="output-value">0</div>
+              <div class="output-note">Weighted average using crit chance.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">B1 score</div>
+              <div id="p1_b1_out" class="output-value">0</div>
+              <div class="output-note">Echoes B1 input or formula result.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">B2 score</div>
+              <div id="p1_b2_out" class="output-value">0</div>
+              <div class="output-note">Echoes B2 input or formula result.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">B3 score</div>
+              <div id="p1_b3_out" class="output-value">0</div>
+              <div class="output-note">Echoes B3 input or formula result.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">B4 score</div>
+              <div id="p1_b4_out" class="output-value">0</div>
+              <div class="output-note">Echoes B4 input or formula result.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">Crit score</div>
+              <div id="p1_crit_score_out" class="output-value">0</div>
+              <div class="output-note">Score from crit chance & damage.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">AS Score</div>
+              <div id="p1_as_score_out" class="output-value">0</div>
+              <div class="output-note">Attack speed effect on DPS.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">Build Score</div>
+              <div id="p1_build_score" class="output-value">0</div>
+              <div class="output-note">Core build power for Phase 1.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">Build Score with AS</div>
+              <div id="p1_build_score_as" class="output-value">0</div>
+              <div class="output-note">Build power including attack speed.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">20 Sec Score (Phase 1)</div>
+              <div id="p1_20_sec" class="output-value">0</div>
+              <div class="output-note">Phase 1 contribution over a 20-second window.</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="section-title">Outputs</div>
-    <div class="outputs">
-      <div class="output-row"><span class="label">Base DMG</span><span class="value" id="p1_base_dmg">0</span></div>
-      <div class="output-row"><span class="label">Normal DMG</span><span class="value" id="p1_normal_dmg">0</span></div>
-      <div class="output-row"><span class="label">Crit DMG</span><span class="value" id="p1_crit_dmg">0</span></div>
-      <div class="output-row"><span class="label">Avg. DMG</span><span class="value" id="p1_avg_dmg">0</span></div>
-      <div class="output-row"><span class="label">Banner DMG</span><span class="value" id="p1_banner_dmg">0</span></div>
-      <div class="output-row"><span class="label">B1 score</span><span class="value" id="p1_b1_score">0</span></div>
-      <div class="output-row"><span class="label">B2 score</span><span class="value" id="p1_b2_score">0</span></div>
-      <div class="output-row"><span class="label">B3 score</span><span class="value" id="p1_b3_score">0</span></div>
-      <div class="output-row"><span class="label">B4 score</span><span class="value" id="p1_b4_score">0</span></div>
-      <div class="output-row"><span class="label">Crit score</span><span class="value" id="p1_crit_score">0</span></div>
-      <div class="output-row"><span class="label">AS Score</span><span class="value" id="p1_as_score">0</span></div>
-      <div class="output-row"><span class="label">Build Score</span><span class="value" id="p1_build_score">0</span></div>
-      <div class="output-row"><span class="label">Build Score with AS</span><span class="value" id="p1_build_score_as">0</span></div>
+    <!-- Phase 2 panel (mirrors Phase 1 but with Phase 2 IDs) -->
+    <div id="phase-2" class="phase-panel">
+      <div>
+        <!-- General modifiers -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Phase 2 – General window & modifiers</h2>
+            <small>Infernal Rift window, 2nd phase</small>
+          </div>
+          <div class="panel-divider"></div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label>2nd phase (seconds)</label>
+              <div class="tooltip-input">
+                <input id="p2_duration" type="number" step="0.01" class="blue-input" value="8.46" />
+                <span class="tooltip-text">
+                  <strong>Phase 2 duration</strong><br />
+                  Length of your second damage window in seconds.<br />
+                  Use the duration from your Phase 2 section in the spreadsheet.
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Resonance</label>
+              <div class="tooltip-input">
+                <input id="p2_resonance" type="number" step="1" class="blue-input" value="1121" />
+                <span class="tooltip-text">
+                  <strong>Resonance (Phase 2)</strong><br />
+                  Resonance for your Phase 2 gear setup or alternate gem layout.<br />
+                  This may differ from Phase 1 if you swap gems or items.
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>BED modifier</label>
+              <div class="tooltip-input">
+                <input id="p2_bed" type="number" step="0.01" class="blue-input" value="1.0" />
+                <span class="tooltip-text">
+                  <strong>BED – Bonus Effect Damage</strong><br />
+                  Total BED multiplier for Phase 2.<br />
+                  Use the same approach as Phase 1 but with Phase 2 values.
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Vithus BED</label>
+              <div class="tooltip-input">
+                <input id="p2_vithus_bed" type="number" step="0.01" class="blue-input" value="0.30" />
+                <span class="tooltip-text">
+                  <strong>Vithu's Urge bonus damage</strong><br />
+                  Phase 2 Vithu's uptime/bonus, as a decimal.<br />
+                  Mirror the Phase 2 spreadsheet value.
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Baron HED</label>
+              <div class="tooltip-input">
+                <input id="p2_baron_hed" type="number" step="0.01" class="blue-input" value="0.30" />
+                <span class="tooltip-text">
+                  <strong>Baron – Heroic Effect Damage</strong><br />
+                  Phase 2 Baron HED multiplier as decimal.
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Potency HED</label>
+              <div class="tooltip-input">
+                <input id="p2_potency_hed" type="number" step="0.01" class="blue-input" value="0.35" />
+                <span class="tooltip-text">
+                  <strong>Potency-based HED</strong><br />
+                  Phase 2 Potency HED contribution.<br />
+                  Match the Phase 2 spreadsheet value.
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Misery Elixir HED</label>
+              <div class="tooltip-input">
+                <input id="p2_misery_hed" type="number" step="0.01" class="blue-input" value="0.00" />
+                <span class="tooltip-text">
+                  <strong>Misery Elixir HED (Phase 2)</strong><br />
+                  Misery Elixir Heroic bonus if active during Phase 2 only.<br />
+                  Enter 0 if not used.
+                </span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>HED Modifier (auto)</label>
+              <div class="tooltip-input">
+                <input id="p2_hed_modifier" type="number" step="0.001" value="1.0" disabled />
+                <span class="tooltip-text">
+                  <strong>Heroic Effect Damage modifier</strong><br />
+                  Combined HED multiplier for Phase 2.<br />
+                  Same structure as Phase 1, but with Phase 2 values.
+                </span>
+              </div>
+              <small>Auto: (1 + Baron) × (1 + Potency) × (1 + Misery)</small>
+            </div>
+
+            <div class="field">
+              <label>CDR Score</label>
+              <div class="tooltip-input">
+                <input id="p2_cdr" type="number" step="0.01" class="blue-input" value="1.43" />
+                <span class="tooltip-text">
+                  <strong>Cooldown Reduction score</strong><br />
+                  Copy the Phase 2 CDR Score value from your spreadsheet.
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Equipment -->
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Phase 2 – Equipment & stats</h2>
+            <small>Same structure, Phase 2 values</small>
+          </div>
+          <div class="panel-divider"></div>
+
+          <div class="equipment-grid">
+            <div class="equip-slot">
+              <div class="equip-slot-header">
+                <span>Phase 2 totals</span>
+                <small>Global equipment totals</small>
+              </div>
+              <div class="equip-slot-body">
+                <div class="equip-field">
+                  <label>Total Item Base DMG</label>
+                  <div class="tooltip-input">
+                    <input id="p2_total_base" type="number" class="blue-input" value="7105" />
+                    <span class="tooltip-text">
+                      <strong>Total Item Base Damage (Phase 2)</strong><br />
+                      Sum of all base damage values used for Phase 2.<br />
+                      Should match the Phase 2 spreadsheet total.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Total Rune Increase</label>
+                  <div class="tooltip-input">
+                    <input id="p2_total_rune" type="number" class="blue-input" value="342" />
+                    <span class="tooltip-text">
+                      <strong>Total Rune Increase</strong><br />
+                      Phase 2 rune-based flat damage total.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Total Socket Rank</label>
+                  <div class="tooltip-input">
+                    <input id="p2_total_socket" type="number" class="blue-input" value="16" />
+                    <span class="tooltip-text">
+                      <strong>Total Socket Rank</strong><br />
+                      Socket rank sum for Phase 2.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Paragon DMG total</label>
+                  <div class="tooltip-input">
+                    <input id="p2_total_paragon" type="number" class="blue-input" value="8800" />
+                    <span class="tooltip-text">
+                      <strong>Total Paragon Damage</strong><br />
+                      Phase 2 Paragon damage contribution.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Horadrim total</label>
+                  <div class="tooltip-input">
+                    <input id="p2_total_horadrim" type="number" class="blue-input" value="12" />
+                    <span class="tooltip-text">
+                      <strong>Total Horadrim damage</strong><br />
+                      Phase 2 Horadrim vessel damage total.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Total Intelligence</label>
+                  <div class="tooltip-input">
+                    <input id="p2_total_int" type="number" class="blue-input" value="1002" />
+                    <span class="tooltip-text">
+                      <strong>Total Intelligence (Phase 2)</strong><br />
+                      Sum of INT used for Phase 2 damage calculations.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Total Tourmaline</label>
+                  <div class="tooltip-input">
+                    <input id="p2_total_tourm" type="number" class="blue-input" value="572" />
+                    <span class="tooltip-text">
+                      <strong>Total Tourmaline damage</strong><br />
+                      Flat Tourmaline contribution for Phase 2.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>DMG Modifiers %</label>
+                  <div class="tooltip-input">
+                    <input id="p2_dmg_mod_pct" type="number" step="0.01" class="blue-input" value="48" />
+                    <span class="tooltip-text">
+                      <strong>Total Damage Modifiers %</strong><br />
+                      Phase 2 total "% increased damage" modifiers, as in the sheet.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="equip-slot">
+              <div class="equip-slot-header">
+                <span>Buckets & crit</span>
+                <small>Phase 2 scores</small>
+              </div>
+              <div class="equip-slot-body">
+                <div class="equip-field">
+                  <label>B1 (General/BED) score</label>
+                  <div class="tooltip-input">
+                    <input id="p2_b1" type="number" step="0.001" class="blue-input" value="1.0" />
+                    <span class="tooltip-text">
+                      <strong>B1 – General / BED bucket (Phase 2)</strong><br />
+                      Use the B1 score from your Phase 2 sheet.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>B2 (Legendary Gems) score</label>
+                  <div class="tooltip-input">
+                    <input id="p2_b2" type="number" step="0.001" class="blue-input" value="1.0" />
+                    <span class="tooltip-text">
+                      <strong>B2 – Legendary Gems (Phase 2)</strong><br />
+                      Use Phase 2 legendary gem bucket score.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>B3 (Buff/Debuff) score</label>
+                  <div class="tooltip-input">
+                    <input id="p2_b3" type="number" step="0.001" class="blue-input" value="1.0" />
+                    <span class="tooltip-text">
+                      <strong>B3 – Buffs & Debuffs (Phase 2)</strong><br />
+                      Includes Shock, Poison, Lingering Wounds, etc. for Phase 2.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>B4 (Combat Rating) score</label>
+                  <div class="tooltip-input">
+                    <input id="p2_b4" type="number" step="0.001" class="blue-input" value="1.0" />
+                    <span class="tooltip-text">
+                      <strong>B4 – Combat Rating (Phase 2)</strong><br />
+                      CR-based damage bucket for Phase 2.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Crit Chance score</label>
+                  <div class="tooltip-input">
+                    <input id="p2_crit_chance" type="number" step="0.01" class="blue-input" value="11.3" />
+                    <span class="tooltip-text">
+                      <strong>Crit chance (Phase 2)</strong><br />
+                      Effective crit chance % for Phase 2 rotations.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Crit Damage score</label>
+                  <div class="tooltip-input">
+                    <input id="p2_crit_dmg" type="number" step="0.01" class="blue-input" value="49" />
+                    <span class="tooltip-text">
+                      <strong>Crit damage (Phase 2)</strong><br />
+                      Effective crit damage bonus % for Phase 2.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>Crit score (auto)</label>
+                  <div class="tooltip-input">
+                    <input id="p2_crit_score" type="number" step="0.001" value="1.0" disabled />
+                    <span class="tooltip-text">
+                      <strong>Crit score (Phase 2)</strong><br />
+                      Score derived from crit chance and crit damage for Phase 2.
+                    </span>
+                  </div>
+                </div>
+                <div class="equip-field">
+                  <label>AS score</label>
+                  <div class="tooltip-input">
+                    <input id="p2_as_score" type="number" step="0.01" class="blue-input" value="0" />
+                    <span class="tooltip-text">
+                      <strong>Attack speed score (Phase 2)</strong><br />
+                      Effective attack speed effect on DPS. Use Phase 2 value from the sheet.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Outputs column -->
+      <div>
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Phase 2 – Outputs</h2>
+            <small>Matches Phase 2 outputs in the spreadsheet</small>
+          </div>
+          <div class="panel-divider"></div>
+
+          <div class="outputs-grid">
+            <div class="output-field">
+              <div class="output-label">Base DMG</div>
+              <div id="p2_base_dmg" class="output-value">0</div>
+              <div class="output-note">Aggregated base damage before buckets and crit.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">Normal DMG</div>
+              <div id="p2_normal_dmg" class="output-value">0</div>
+              <div class="output-note">Non-crit damage after all multipliers.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">Crit DMG</div>
+              <div id="p2_crit_dmg_out" class="output-value">0</div>
+              <div class="output-note">Critical damage for comparison.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">Avg. DMG</div>
+              <div id="p2_avg_dmg" class="output-value">0</div>
+              <div class="output-note">Weighted average using crit chance.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">B1 score</div>
+              <div id="p2_b1_out" class="output-value">0</div>
+              <div class="output-note">Echoes B1 input or formula result.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">B2 score</div>
+              <div id="p2_b2_out" class="output-value">0</div>
+              <div class="output-note">Echoes B2 input or formula result.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">B3 score</div>
+              <div id="p2_b3_out" class="output-value">0</div>
+              <div class="output-note">Echoes B3 input or formula result.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">B4 score</div>
+              <div id="p2_b4_out" class="output-value">0</div>
+              <div class="output-note">Echoes B4 input or formula result.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">Crit score</div>
+              <div id="p2_crit_score_out" class="output-value">0</div>
+              <div class="output-note">Score from crit chance & damage.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">AS Score</div>
+              <div id="p2_as_score_out" class="output-value">0</div>
+              <div class="output-note">Attack speed effect on DPS.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">Build Score</div>
+              <div id="p2_build_score" class="output-value">0</div>
+              <div class="output-note">Core build power for Phase 2.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">Build Score with AS</div>
+              <div id="p2_build_score_as" class="output-value">0</div>
+              <div class="output-note">Build power including attack speed.</div>
+            </div>
+            <div class="output-field">
+              <div class="output-label">20 Sec Score (Phase 2)</div>
+              <div id="p2_20_sec" class="output-value">0</div>
+              <div class="output-note">Phase 2 contribution over a 20-second window.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      This v2 layout is a structured scaffold. Formulas can be tuned to match the Excel engine exactly.
     </div>
   </div>
 
-  <!-- PHASE 2 -->
-  <div class="phase phase2" id="phase2">
-    <div class="phase-header">
-      <div class="phase-title">Phase II</div>
-      <div class="phase-tag">Infernal Rift Window</div>
-    </div>
+  <script>
+    // Phase tab switching
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const phasePanels = document.querySelectorAll('.phase-panel');
 
-    <div class="section-title">General modifiers</div>
-    <div class="grid-modifiers">
-      <label for="p2_seconds">2nd phase (seconds)</label>
-      <input class="blue-input num" id="p2_seconds" type="number" step="0.01" value="10" />
-
-      <label for="p2_resonance">Resonance</label>
-      <input class="blue-input num" id="p2_resonance" type="number" step="1" value="7233" />
-
-      <label for="p2_bed_mod">BED modifier</label>
-      <input class="blue-input num" id="p2_bed_mod" type="number" step="0.01" value="1.0" />
-
-      <label for="p2_vithus_bed">Vithus BED</label>
-      <input class="blue-input num" id="p2_vithus_bed" type="number" step="0.01" value="0.30" />
-
-      <label for="p2_baron_hed">Baron HED</label>
-      <input class="blue-input num" id="p2_baron_hed" type="number" step="0.01" value="0.30" />
-
-      <label for="p2_potency_hed">Potency HED</label>
-      <input class="blue-input num" id="p2_potency_hed" type="number" step="0.01" value="0.35" />
-
-      <label for="p2_misery_hed">Misery Elixir HED</label>
-      <input class="blue-input num" id="p2_misery_hed" type="number" step="0.01" value="0.00" />
-
-      <label for="p2_hed_mod">HED Modifier</label>
-      <input class="blue-input num" id="p2_hed_mod" type="number" step="0.01" value="1.0" />
-
-      <label for="p2_cdr_score">CDR Score</label>
-      <input class="blue-input num" id="p2_cdr_score" type="number" step="0.01" value="1.43" />
-    </div>
-
-    <div class="section-title">Equipment</div>
-    <div class="table-wrapper">
-      <table>
-        <thead>
-        <tr>
-          <th>Equipment</th>
-          <th>Item Base DMG</th>
-          <th>Item Base DMG increased %</th>
-          <th>Rune increase</th>
-          <th>Socket Rank</th>
-          <th>Paragon DMG</th>
-          <th>Horadrim</th>
-          <th>Intelligence</th>
-          <th>Tourmaline</th>
-          <th>BED</th>
-          <th>Dmg Mod (B1)</th>
-          <th>B1 %</th>
-          <th>Leg Gems (B2)</th>
-          <th>B2 %</th>
-          <th>Buff/Debuff (B3)</th>
-          <th>B3 %</th>
-          <th>CR (B4)</th>
-          <th>Crit Chance</th>
-          <th>Crit Damage</th>
-          <th>Attack Speed</th>
-        </tr>
-        </thead>
-        <tbody id="p2_equipment_body">
-
-        <!-- PHASE 2 EQUIPMENT ROWS -->
-        <tr class="equip-row" data-slot="neck">
-          <td class="item-label">Neck</td>
-          <td><input class="blue-input num" id="p2_neck_base" value="0" /></td>
-          <td><input class="blue-input num" id="p2_neck_base_inc" value="0" /></td>
-          <td><input class="blue-input num" id="p2_neck_rune" value="0" /></td>
-          <td><input class="blue-input num" id="p2_neck_socket" value="0" /></td>
-          <td><input class="blue-input num" id="p2_neck_paragon" value="0" /></td>
-          <td><input class="blue-input num" id="p2_neck_horadrim" value="0" /></td>
-          <td><input class="blue-input num" id="p2_neck_int" value="0" /></td>
-          <td><input class="blue-input num" id="p2_neck_tourm" value="0" /></td>
-          <td><input class="blue-input num" id="p2_neck_bed" value="0" /></td>
-          <td><input class="blue-input" type="text" id="p2_neck_b1_src" value="" /></td>
-          <td><input class="blue-input num" id="p2_neck_b1_pct" step="0.01" value="0" /></td>
-          <td><input class="blue-input" type="text" id="p2_neck_b2_src" value="" /></td>
-          <td><input class="blue-input num" id="p2_neck_b2_pct" step="0.01" value="0" /></td>
-          <td><input class="blue-input" type="text" id="p2_neck_b3_src" value="" /></td>
-          <td><input class="blue-input num" id="p2_neck_b3_pct" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p2_neck_cr" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p2_neck_crit_ch" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p2_neck_crit_dmg" step="0.01" value="0" /></td>
-          <td><input class="blue-input num" id="p2_neck_as" step="0.01" value="0" /></td>
-        </tr>
-
-        <!-- Repeat same pattern for all slots as Phase 1 (ring1, ring2, gloves, waist, feet, head, chest, shoulder, legs, mh1, oh1, mh2, oh2, wrist1, wrist2, tableau, dr) -->
-
-        </tbody>
-      </table>
-    </div>
-
-    <div class="section-title">Outputs</div>
-    <div class="outputs">
-      <div class="output-row"><span class="label">Base DMG</span><span class="value" id="p2_base_dmg">0</span></div>
-      <div class="output-row"><span class="label">Normal DMG</span><span class="value" id="p2_normal_dmg">0</span></div>
-      <div class="output-row"><span class="label">Crit DMG</span><span class="value" id="p2_crit_dmg">0</span></div>
-      <div class="output-row"><span class="label">Avg. DMG</span><span class="value" id="p2_avg_dmg">0</span></div>
-      <div class="output-row"><span class="label">Banner DMG</span><span class="value" id="p2_banner_dmg">0</span></div>
-      <div class="output-row"><span class="label">B1 score</span><span class="value" id="p2_b1_score">0</span></div>
-      <div class="output-row"><span class="label">B2 score</span><span class="value" id="p2_b2_score">0</span></div>
-      <div class="output-row"><span class="label">B3 score</span><span class="value" id="p2_b3_score">0</span></div>
-      <div class="output-row"><span class="label">B4 score</span><span class="value" id="p2_b4_score">0</span></div>
-      <div class="output-row"><span class="label">Crit score</span><span class="value" id="p2_crit_score">0</span></div>
-      <div class="output-row"><span class="label">AS Score</span><span class="value" id="p2_as_score">0</span></div>
-      <div class="output-row"><span class="label">Build Score</span><span class="value" id="p2_build_score">0</span></div>
-      <div class="output-row"><span class="label">Build Score with AS</span><span class="value" id="p2_build_score_as">0</span></div>
-    </div>
-  </div>
-</div>
-
-<div class="footer">
-  <div class="footer-beam"></div>
-  <div class="footer-block">
-    <span class="label">20 Sec Score</span>
-    <span class="value" id="score_20sec">0</span>
-  </div>
-  <div class="footer-block">
-    <span class="label">20 Sec Score with AS</span>
-    <span class="value" id="score_20sec_as">0</span>
-  </div>
-</div>
-
-<script>
-  /* --- Utility Functions --- */
-  function getNum(id) {
-    const el = document.getElementById(id);
-    if (!el) return 0;
-    const v = parseFloat(el.value);
-    return isNaN(v) ? 0 : v;
-  }
-
-  function setTextAndPulse(id, value, decimals = 2) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const old = el.textContent;
-    const newVal = Number(value || 0).toFixed(decimals);
-    el.textContent = newVal;
-    if (old !== newVal) {
-      el.classList.remove("pulse");
-      void el.offsetWidth;
-      el.classList.add("pulse");
-    }
-  }
-
-  const SLOTS = [
-    "neck","ring1","ring2",
-    "gloves","waist","feet",
-    "head","chest","shoulder","legs",
-    "mh1","oh1","mh2","oh2",
-    "wrist1","wrist2","tableau","dr"
-  ];
-
-  function sumPhase(phase, suffix) {
-    return SLOTS.reduce((acc, slot) => {
-      const id = `${phase}_${slot}_${suffix}`;
-      return acc + getNum(id);
-    }, 0);
-  }
-
-  /* --- Main Recalculation --- */
-  function recalc() {
-    const p1_seconds = getNum("p1_seconds");
-    const p2_seconds = getNum("p2_seconds");
-
-    /* --- Phase 1 Totals --- */
-    let p1_total_base = 0;
-    let p1_total_rune = 0;
-    let p1_total_socket = 0;
-    let p1_total_paragon = 0;
-    let p1_total_horadrim = 0;
-    let p1_total_int = 0;
-    let p1_total_tourm = 0;
-    let p1_total_bed = 0;
-    let p1_total_b1pct = 0;
-    let p1_total_b2pct = 0;
-    let p1_total_b3pct = 0;
-    let p1_total_b4 = 0;
-    let p1_total_crit_ch = 0;
-    let p1_total_crit_dmg = 0;
-    let p1_total_as = 0;
-
-    SLOTS.forEach(slot => {
-      const baseRaw = getNum(`p1_${slot}_base`);
-      const baseIncPct = getNum(`p1_${slot}_base_inc`); // as fraction (e.g. 12 => 12%)
-      const baseIncMult = 1 + (baseIncPct / 100);
-      const baseEffective = baseRaw * baseIncMult;
-
-      p1_total_base += baseEffective;
-      p1_total_rune += getNum(`p1_${slot}_rune`);
-      p1_total_socket += getNum(`p1_${slot}_socket`);
-      p1_total_paragon += getNum(`p1_${slot}_paragon`);
-      p1_total_horadrim += getNum(`p1_${slot}_horadrim`);
-      p1_total_int += getNum(`p1_${slot}_int`);
-      p1_total_tourm += getNum(`p1_${slot}_tourm`);
-      p1_total_bed += getNum(`p1_${slot}_bed`);
-      p1_total_b1pct += getNum(`p1_${slot}_b1_pct`);
-      p1_total_b2pct += getNum(`p1_${slot}_b2_pct`);
-      p1_total_b3pct += getNum(`p1_${slot}_b3_pct`);
-      p1_total_b4 += getNum(`p1_${slot}_cr`);
-      p1_total_crit_ch += getNum(`p1_${slot}_crit_ch`);
-      p1_total_crit_dmg += getNum(`p1_${slot}_crit_dmg`);
-      p1_total_as += getNum(`p1_${slot}_as`);
-    });
-
-    const p1_b1_sum = p1_total_b1pct;
-    const p1_b2_sum = p1_total_b2pct;
-    const p1_b3_sum = p1_total_b3pct;
-    const p1_b4_sum = Math.min(p1_total_b4, 1);
-    const p1_crit_ch = Math.min(p1_total_crit_ch, 1);
-    const p1_crit_dmg = Math.max(p1_total_crit_dmg, 0);
-    const p1_as_sum = Math.min(p1_total_as, 2.2);
-
-    const resonance1 = getNum("p1_resonance");
-    const vithus_bed1 = getNum("p1_vithus_bed");
-    const baron_hed1 = getNum("p1_baron_hed");
-    const potency_hed1 = getNum("p1_potency_hed");
-    const misery_hed1 = getNum("p1_misery_hed");
-    const cdrScore1 = getNum("p1_cdr_score");
-
-    const bedMod1 = (1 + p1_total_bed) * (1 + vithus_bed1);
-    const hedMod1 = (1 + baron_hed1) * (1 + potency_hed1) * (1 + misery_hed1);
-
-    // Base damage: item base (with inc%), plus CDR scaling, plus tourm, INT scaling, paragon, horadrim, rune, socket
-    const p1_base_dmg =
-      p1_total_base +
-      (p1_total_base * cdrScore1 * 0.0005) +
-      p1_total_tourm +
-      p1_total_int * 0.3 +
-      p1_total_paragon +
-      p1_total_horadrim +
-      p1_total_rune +
-      p1_total_socket;
-
-    const p1_L5 = p1_base_dmg * (1 + resonance1 * 0.0005) * bedMod1 * hedMod1;
-
-    const p1_b1_mult = 1 + p1_b1_sum;
-    const p1_b2_mult = 1 + p1_b2_sum;
-    const p1_b3_mult = 1 + p1_b3_sum;
-    const p1_b4_mult = 1 + p1_b4_sum;
-
-    const p1_normal = p1_L5 * p1_b1_mult * p1_b2_mult * p1_b3_mult * p1_b4_mult;
-
-    // Crit multiplier: 1 + critChance * (1 + critDamage)
-    const p1_crit_mult = 1 + p1_crit_ch * (1 + p1_crit_dmg);
-    const p1_crit = p1_L5 * p1_crit_mult;
-
-    // Average damage: weight between normal and crit using crit chance and crit damage
-    const p1_avg_mult = 1 + p1_crit_ch * p1_crit_dmg;
-    const p1_avg = p1_L5 * p1_avg_mult;
-
-    const p1_V5 = 1 + p1_as_sum;
-    const p1_banner = p1_crit * p1_V5;
-
-    const p1_b1_score = p1_b1_mult;
-    const p1_b2_score = p1_b2_mult;
-    const p1_b3_score = p1_b3_mult;
-    const p1_b4_score = p1_b4_mult;
-    const p1_crit_score = 1 + p1_crit_ch * (1 + p1_crit_dmg);
-    const p1_as_score = 1 + p1_as_sum;
-
-    const p1_build = p1_b1_score * p1_b2_score * p1_b3_score * p1_b4_score * p1_crit_score;
-    const p1_build_as = p1_build * p1_as_score;
-
-    setTextAndPulse("p1_base_dmg", p1_base_dmg, 1);
-    setTextAndPulse("p1_normal_dmg", p1_normal, 0);
-    setTextAndPulse("p1_crit_dmg", p1_crit, 0);
-    setTextAndPulse("p1_avg_dmg", p1_avg, 0);
-    setTextAndPulse("p1_banner_dmg", p1_banner, 0);
-    setTextAndPulse("p1_b1_score", p1_b1_score, 3);
-    setTextAndPulse("p1_b2_score", p1_b2_score, 3);
-    setTextAndPulse("p1_b3_score", p1_b3_score, 3);
-    setTextAndPulse("p1_b4_score", p1_b4_score, 3);
-    setTextAndPulse("p1_crit_score", p1_crit_score, 3);
-    setTextAndPulse("p1_as_score", p1_as_score, 3);
-    setTextAndPulse("p1_build_score", p1_build, 3);
-    setTextAndPulse("p1_build_score_as", p1_build_as, 3);
-
-    /* --- Phase 2 Totals --- */
-    let p2_total_base = 0;
-    let p2_total_rune = 0;
-    let p2_total_socket = 0;
-    let p2_total_paragon = 0;
-    let p2_total_horadrim = 0;
-    let p2_total_int = 0;
-    let p2_total_tourm = 0;
-    let p2_total_bed = 0;
-    let p2_total_b1pct = 0;
-    let p2_total_b2pct = 0;
-    let p2_total_b3pct = 0;
-    let p2_total_b4 = 0;
-    let p2_total_crit_ch = 0;
-    let p2_total_crit_dmg = 0;
-    let p2_total_as = 0;
-
-    SLOTS.forEach(slot => {
-      const baseRaw = getNum(`p2_${slot}_base`);
-      const baseIncPct = getNum(`p2_${slot}_base_inc`);
-      const baseIncMult = 1 + (baseIncPct / 100);
-      const baseEffective = baseRaw * baseIncMult;
-
-      p2_total_base += baseEffective;
-      p2_total_rune += getNum(`p2_${slot}_rune`);
-      p2_total_socket += getNum(`p2_${slot}_socket`);
-      p2_total_paragon += getNum(`p2_${slot}_paragon`);
-      p2_total_horadrim += getNum(`p2_${slot}_horadrim`);
-      p2_total_int += getNum(`p2_${slot}_int`);
-      p2_total_tourm += getNum(`p2_${slot}_tourm`);
-      p2_total_bed += getNum(`p2_${slot}_bed`);
-      p2_total_b1pct += getNum(`p2_${slot}_b1_pct`);
-      p2_total_b2pct += getNum(`p2_${slot}_b2_pct`);
-      p2_total_b3pct += getNum(`p2_${slot}_b3_pct`);
-      p2_total_b4 += getNum(`p2_${slot}_cr`);
-      p2_total_crit_ch += getNum(`p2_${slot}_crit_ch`);
-      p2_total_crit_dmg += getNum(`p2_${slot}_crit_dmg`);
-      p2_total_as += getNum(`p2_${slot}_as`);
-    });
-
-    const p2_b1_sum = p2_total_b1pct;
-    const p2_b2_sum = p2_total_b2pct;
-    const p2_b3_sum = p2_total_b3pct;
-    const p2_b4_sum = Math.min(p2_total_b4, 1);
-    const p2_crit_ch = Math.min(p2_total_crit_ch, 1);
-    const p2_crit_dmg = Math.max(p2_total_crit_dmg, 0);
-    const p2_as_sum = Math.min(p2_total_as, 2.2);
-
-    const resonance2 = getNum("p2_resonance");
-    const vithus_bed2 = getNum("p2_vithus_bed");
-    const baron_hed2 = getNum("p2_baron_hed");
-    const potency_hed2 = getNum("p2_potency_hed");
-    const misery_hed2 = getNum("p2_misery_hed");
-    const cdrScore2 = getNum("p2_cdr_score");
-
-    const bedMod2 = (1 + p2_total_bed) * (1 + vithus_bed2);
-    const hedMod2 = (1 + baron_hed2) * (1 + potency_hed2) * (1 + misery_hed2);
-
-    const p2_base_dmg =
-      p2_total_base +
-      (p2_total_base * cdrScore2 * 0.0005) +
-      p2_total_tourm +
-      p2_total_int * 0.3 +
-      p2_total_paragon +
-      p2_total_horadrim +
-      p2_total_rune +
-      p2_total_socket;
-
-    const p2_L5 = p2_base_dmg * (1 + resonance2 * 0.0005) * bedMod2 * hedMod2;
-
-    const p2_b1_mult = 1 + p2_b1_sum;
-    const p2_b2_mult = 1 + p2_b2_sum;
-    const p2_b3_mult = 1 + p2_b3_sum;
-    const p2_b4_mult = 1 + p2_b4_sum;
-
-    const p2_normal = p2_L5 * p2_b1_mult * p2_b2_mult * p2_b3_mult * p2_b4_mult;
-
-    const p2_crit_mult = 1 + p2_crit_ch * (1 + p2_crit_dmg);
-    const p2_crit = p2_L5 * p2_crit_mult;
-
-    const p2_avg_mult = 1 + p2_crit_ch * p2_crit_dmg;
-    const p2_avg = p2_L5 * p2_avg_mult;
-
-    const p2_V5 = 1 + p2_as_sum;
-    const p2_banner = p2_crit * p2_V5;
-
-    const p2_b1_score = p2_b1_mult;
-    const p2_b2_score = p2_b2_mult;
-    const p2_b3_score = p2_b3_mult;
-    const p2_b4_score = p2_b4_mult;
-    const p2_crit_score = 1 + p2_crit_ch * (1 + p2_crit_dmg);
-    const p2_as_score = 1 + p2_as_sum;
-
-    const p2_build = p2_b1_score * p2_b2_score * p2_b3_score * p2_b4_score * p2_crit_score;
-    const p2_build_as = p2_build * p2_as_score;
-
-    setTextAndPulse("p2_base_dmg", p2_base_dmg, 1);
-    setTextAndPulse("p2_normal_dmg", p2_normal, 0);
-    setTextAndPulse("p2_crit_dmg", p2_crit, 0);
-    setTextAndPulse("p2_avg_dmg", p2_avg, 0);
-    setTextAndPulse("p2_banner_dmg", p2_banner, 0);
-    setTextAndPulse("p2_b1_score", p2_b1_score, 3);
-    setTextAndPulse("p2_b2_score", p2_b2_score, 3);
-    setTextAndPulse("p2_b3_score", p2_b3_score, 3);
-    setTextAndPulse("p2_b4_score", p2_b4_score, 3);
-    setTextAndPulse("p2_crit_score", p2_crit_score, 3);
-    setTextAndPulse("p2_as_score", p2_as_score, 3);
-    setTextAndPulse("p2_build_score", p2_build, 3);
-    setTextAndPulse("p2_build_score_as", p2_build_as, 3);
-
-    /* --- Final 20-second Scores --- */
-    const totalSeconds = Math.max(p1_seconds + p2_seconds, 1);
-    const score20 = ((p1_build * p1_seconds) + (p2_build * p2_seconds)) / totalSeconds * (20 / totalSeconds);
-    const score20_as = ((p1_build_as * p1_seconds) + (p2_build_as * p2_seconds)) / totalSeconds * (20 / totalSeconds);
-
-    setTextAndPulse("score_20sec", score20, 2);
-    setTextAndPulse("score_20sec_as", score20_as, 2);
-  }
-
-  /* --- Input Listeners --- */
-  function attachListeners() {
-    const inputs = document.querySelectorAll("input.num");
-    inputs.forEach(inp => {
-      inp.addEventListener("input", () => {
-        inp.classList.remove("changed");
-        void inp.offsetWidth;
-        inp.classList.add("changed");
-        recalc();
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-phase');
+        tabButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        phasePanels.forEach(panel => {
+          panel.classList.toggle('active', panel.id === `phase-${target}`);
+        });
       });
     });
-  }
 
-  window.addEventListener("load", () => {
-    attachListeners();
-    recalc();
-  });
-</script>
+    // Basic calculator logic (placeholder formulas – to be aligned with Excel)
+    function calcPhase1() {
+      const duration = parseFloat(document.getElementById('p1_duration').value) || 0;
+      const resonance = parseFloat(document.getElementById('p1_resonance').value) || 0;
+      const bed = parseFloat(document.getElementById('p1_bed').value) || 1;
+      const vithusBed = parseFloat(document.getElementById('p1_vithus_bed').value) || 0;
+      const baron = parseFloat(document.getElementById('p1_baron_hed').value) || 0;
+      const potency = parseFloat(document.getElementById('p1_potency_hed').value) || 0;
+      const misery = parseFloat(document.getElementById('p1_misery_hed').value) || 0;
+      const cdr = parseFloat(document.getElementById('p1_cdr').value) || 1;
 
+      const totalBase = parseFloat(document.getElementById('p1_total_base').value) || 0;
+      const totalRune = parseFloat(document.getElementById('p1_total_rune').value) || 0;
+      const totalSocket = parseFloat(document.getElementById('p1_total_socket').value) || 0;
+      const totalParagon = parseFloat(document.getElementById('p1_total_paragon').value) || 0;
+      const totalHoradrim = parseFloat(document.getElementById('p1_total_horadrim').value) || 0;
+      const totalInt = parseFloat(document.getElementById('p1_total_int').value) || 0;
+      const totalTourm = parseFloat(document.getElementById('p1_total_tourm').value) || 0;
+      const dmgModPct = parseFloat(document.getElementById('p1_dmg_mod_pct').value) || 0;
+
+      const b1 = parseFloat(document.getElementById('p1_b1').value) || 1;
+      const b2 = parseFloat(document.getElementById('p1_b2').value) || 1;
+      const b3 = parseFloat(document.getElementById('p1_b3').value) || 1;
+      const b4 = parseFloat(document.getElementById('p1_b4').value) || 1;
+
+      const critChance = (parseFloat(document.getElementById('p1_crit_chance').value) || 0) / 100;
+      const critDmgPct = (parseFloat(document.getElementById('p1_crit_dmg').value) || 0) / 100;
+      const asScorePct = (parseFloat(document.getElementById('p1_as_score').value) || 0) / 100;
+
+      // HED modifier (placeholder structure)
+      const hedModifier = (1 + baron) * (1 + potency) * (1 + misery);
+      document.getElementById('p1_hed_modifier').value = hedModifier.toFixed(3);
+
+      // Simple base damage model (placeholder)
+      const intToDmg = totalInt * 0.3;
+      const resonanceMult = 1 + resonance * 0.0005;
+      const dmgModMult = 1 + dmgModPct / 100;
+      const flatBase = totalBase + totalRune + totalParagon + totalHoradrim + totalTourm + intToDmg;
+
+      const baseDmg = flatBase * resonanceMult * dmgModMult;
+      document.getElementById('p1_base_dmg').textContent = baseDmg.toFixed(1);
+
+      // Crit score (placeholder: 1 + chance * crit bonus)
+      const critScore = 1 + critChance * critDmgPct;
+      document.getElementById('p1_crit_score').value = critScore.toFixed(3);
+      document.getElementById('p1_crit_score_out').textContent = critScore.toFixed(3);
+
+      // Normal / crit damage (placeholder)
+      const normalDmg = baseDmg * bed * (1 + vithusBed) * hedModifier * b1 * b2 * b3 * b4 * cdr;
+      const critDmg = normalDmg * (1 + critDmgPct);
+      const avgDmg = normalDmg * (1 - critChance) + critDmg * critChance;
+
+            document.getElementById('p1_normal_dmg').textContent = normalDmg.toFixed(1);
+      document.getElementById('p1_crit_dmg_out').textContent = critDmg.toFixed(1);
+      document.getElementById('p1_avg_dmg').textContent = avgDmg.toFixed(1);
+
+      // Echo B1–B4
+      document.getElementById('p1_b1_out').textContent = b1.toFixed(3);
+      document.getElementById('p1_b2_out').textContent = b2.toFixed(3);
+      document.getElementById('p1_b3_out').textContent = b3.toFixed(3);
+      document.getElementById('p1_b4_out').textContent = b4.toFixed(3);
+
+      // AS score output (for now just echo as a multiplier)
+      const asScoreMult = 1 + asScorePct;
+      document.getElementById('p1_as_score_out').textContent = asScoreMult.toFixed(3);
+
+      // Build Score (placeholder: average damage × bucket multipliers)
+      const buildScore = avgDmg;
+      document.getElementById('p1_build_score').textContent = buildScore.toFixed(2);
+
+      // Build Score with AS (placeholder: multiply by AS effect)
+      const buildScoreAS = buildScore * asScoreMult;
+      document.getElementById('p1_build_score_as').textContent = buildScoreAS.toFixed(2);
+
+      // 20-sec score (placeholder: scale by phase duration / 20)
+      const phaseShare = duration / 20;
+      const score20 = buildScoreAS * phaseShare;
+      document.getElementById('p1_20_sec').textContent = score20.toFixed(2);
+    }
+
+    function calcPhase2() {
+      const duration = parseFloat(document.getElementById('p2_duration').value) || 0;
+      const resonance = parseFloat(document.getElementById('p2_resonance').value) || 0;
+      const bed = parseFloat(document.getElementById('p2_bed').value) || 1;
+      const vithusBed = parseFloat(document.getElementById('p2_vithus_bed').value) || 0;
+      const baron = parseFloat(document.getElementById('p2_baron_hed').value) || 0;
+      const potency = parseFloat(document.getElementById('p2_potency_hed').value) || 0;
+      const misery = parseFloat(document.getElementById('p2_misery_hed').value) || 0;
+      const cdr = parseFloat(document.getElementById('p2_cdr').value) || 1;
+
+      const totalBase = parseFloat(document.getElementById('p2_total_base').value) || 0;
+      const totalRune = parseFloat(document.getElementById('p2_total_rune').value) || 0;
+      const totalSocket = parseFloat(document.getElementById('p2_total_socket').value) || 0;
+      const totalParagon = parseFloat(document.getElementById('p2_total_paragon').value) || 0;
+      const totalHoradrim = parseFloat(document.getElementById('p2_total_horadrim').value) || 0;
+      const totalInt = parseFloat(document.getElementById('p2_total_int').value) || 0;
+      const totalTourm = parseFloat(document.getElementById('p2_total_tourm').value) || 0;
+      const dmgModPct = parseFloat(document.getElementById('p2_dmg_mod_pct').value) || 0;
+
+      const b1 = parseFloat(document.getElementById('p2_b1').value) || 1;
+      const b2 = parseFloat(document.getElementById('p2_b2').value) || 1;
+      const b3 = parseFloat(document.getElementById('p2_b3').value) || 1;
+      const b4 = parseFloat(document.getElementById('p2_b4').value) || 1;
+
+      const critChance = (parseFloat(document.getElementById('p2_crit_chance').value) || 0) / 100;
+      const critDmgPct = (parseFloat(document.getElementById('p2_crit_dmg').value) || 0) / 100;
+      const asScorePct = (parseFloat(document.getElementById('p2_as_score').value) || 0) / 100;
+
+      const hedModifier = (1 + baron) * (1 + potency) * (1 + misery);
+      document.getElementById('p2_hed_modifier').value = hedModifier.toFixed(3);
+
+      const intToDmg = totalInt * 0.3;
+      const resonanceMult = 1 + resonance * 0.0005;
+      const dmgModMult = 1 + dmgModPct / 100;
+      const flatBase = totalBase + totalRune + totalParagon + totalHoradrim + totalTourm + intToDmg;
+
+      const baseDmg = flatBase * resonanceMult * dmgModMult;
+      document.getElementById('p2_base_dmg').textContent = baseDmg.toFixed(1);
+
+      const critScore = 1 + critChance * critDmgPct;
+      document.getElementById('p2_crit_score').value = critScore.toFixed(3);
+      document.getElementById('p2_crit_score_out').textContent = critScore.toFixed(3);
+
+      const normalDmg = baseDmg * bed * (1 + vithusBed) * hedModifier * b1 * b2 * b3 * b4 * cdr;
+      const critDmg = normalDmg * (1 + critDmgPct);
+      const avgDmg = normalDmg * (1 - critChance) + critDmg * critChance;
+
+      document.getElementById('p2_normal_dmg').textContent = normalDmg.toFixed(1);
+      document.getElementById('p2_crit_dmg_out').textContent = critDmg.toFixed(1);
+      document.getElementById('p2_avg_dmg').textContent = avgDmg.toFixed(1);
+
+      document.getElementById('p2_b1_out').textContent = b1.toFixed(3);
+      document.getElementById('p2_b2_out').textContent = b2.toFixed(3);
+      document.getElementById('p2_b3_out').textContent = b3.toFixed(3);
+      document.getElementById('p2_b4_out').textContent = b4.toFixed(3);
+
+      const asScoreMult = 1 + asScorePct;
+      document.getElementById('p2_as_score_out').textContent = asScoreMult.toFixed(3);
+
+      const buildScore = avgDmg;
+      document.getElementById('p2_build_score').textContent = buildScore.toFixed(2);
+
+      const buildScoreAS = buildScore * asScoreMult;
+      document.getElementById('p2_build_score_as').textContent = buildScoreAS.toFixed(2);
+
+      const phaseShare = duration / 20;
+      const score20 = buildScoreAS * phaseShare;
+      document.getElementById('p2_20_sec').textContent = score20.toFixed(2);
+    }
+
+    // Recalculate on input change
+    const idsToWatch = [
+      'p1_duration','p1_resonance','p1_bed','p1_vithus_bed','p1_baron_hed','p1_potency_hed','p1_misery_hed',
+      'p1_cdr','p1_total_base','p1_total_rune','p1_total_socket','p1_total_paragon','p1_total_horadrim',
+      'p1_total_int','p1_total_tourm','p1_dmg_mod_pct','p1_b1','p1_b2','p1_b3','p1_b4',
+      'p1_crit_chance','p1_crit_dmg','p1_as_score',
+      'p2_duration','p2_resonance','p2_bed','p2_vithus_bed','p2_baron_hed','p2_potency_hed','p2_misery_hed',
+      'p2_cdr','p2_total_base','p2_total_rune','p2_total_socket','p2_total_paragon','p2_total_horadrim',
+      'p2_total_int','p2_total_tourm','p2_dmg_mod_pct','p2_b1','p2_b2','p2_b3','p2_b4',
+      'p2_crit_chance','p2_crit_dmg','p2_as_score'
+    ];
+
+    idsToWatch.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', () => {
+          calcPhase1();
+          calcPhase2();
+        });
+      }
+    });
+
+    // Initial calculation on load
+    calcPhase1();
+    calcPhase2();
+  </script>
 </body>
 </html>
