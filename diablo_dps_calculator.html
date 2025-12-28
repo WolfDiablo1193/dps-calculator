@@ -120,16 +120,17 @@
       pointer-events: none;
     }
 
+    /* STACK PHASES VERTICALLY */
     .phase-container {
       display: flex;
-      gap: 18px;
-      align-items: flex-start;
+      flex-direction: column;
+      gap: 28px;
       max-width: 1400px;
       margin: 0 auto;
     }
 
     .phase {
-      flex: 1;
+      width: 100%;
       background: radial-gradient(circle at top, rgba(17,24,39,0.85), rgba(10,14,22,0.98));
       border-radius: 16px;
       border: 1px solid rgba(55,65,81,0.8);
@@ -160,15 +161,6 @@
         radial-gradient(circle at 10% 0%, rgba(239,68,68,0.25), transparent 60%),
         radial-gradient(circle at 90% 120%, rgba(248,113,113,0.2), transparent 60%);
       animation: infernalRift 26s linear infinite;
-    }
-
-    .phase::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      border: 1px solid rgba(15,23,42,0.9);
-      pointer-events: none;
     }
 
     @keyframes arcaneRift {
@@ -293,10 +285,15 @@
       100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
     }
 
-    input[readonly] {
-      background: #020617;
-      border-color: #111827;
-      color: #d1d5db;
+    /* TABLE WRAPPER PANEL (C1 STYLE) */
+    .table-wrapper {
+      background: radial-gradient(circle at top, rgba(17,24,39,0.85), rgba(10,14,22,0.98));
+      border: 1px solid rgba(55,65,81,0.8);
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 10px;
+      overflow-x: auto;
+      box-shadow: var(--shadow-deep);
     }
 
     table {
@@ -306,8 +303,8 @@
       font-size: 0.72rem;
       position: relative;
       z-index: 1;
+      min-width: 1200px;
     }
-
     th, td {
       border: 1px solid rgba(31,41,55,0.9);
       padding: 3px 4px;
@@ -489,6 +486,7 @@
     }
   </style>
 </head>
+
 <body>
 
 <div class="title-frame">
@@ -508,7 +506,7 @@
     <div class="section-title">General modifiers</div>
     <div class="grid-modifiers">
       <label for="p1_seconds">1st phase (seconds)</label>
-      <input class="blue-input num" id="p1_seconds" type="number" step="0.01" value="11.54" />
+      <input class="blue-input num" id="p1_seconds" type="number" step="0.01" value="20" />
 
       <label for="p1_resonance">Resonance</label>
       <input class="blue-input num" id="p1_resonance" type="number" step="1" value="1321" />
@@ -536,108 +534,107 @@
     </div>
 
     <div class="section-title">Equipment</div>
-    <table>
-      <thead>
-      <tr>
-        <th>Equipment</th>
-        <th>Item Base DMG</th>
-        <th>Item Base DMG increased</th>
-        <th>Rune increase</th>
-        <th>Socket Rank</th>
-        <th>Paragon DMG</th>
-        <th>Horadrim</th>
-        <th>Intelligence</th>
-        <th>Tourmaline</th>
-        <th>BED</th>
-        <th>Dmg Mod (B1)</th>
-        <th>B1 %</th>
-        <th>Leg Gems (B2)</th>
-        <th>B2 %</th>
-        <th>Buff/Debuff (B3)</th>
-        <th>B3 %</th>
-        <th>CR (B4)</th>
-        <th>Crit Chance</th>
-        <th>Crit Damage</th>
-        <th>Attack Speed</th>
-      </tr>
-      </thead>
-      <tbody id="p1_equipment_body">
-      <!-- Each row: data-slot attribute used by JS -->
-      <tr class="equip-row" data-slot="neck">
-        <td class="item-label">Neck</td>
-        <td><input class="blue-input num" id="p1_neck_base" value="8880" /></td>
-        <td><input class="blue-input num" id="p1_neck_base_inc" value="12" /></td>
-        <td><input class="blue-input num" id="p1_neck_rune" value="0" /></td>
-        <td><input class="blue-input num" id="p1_neck_socket" value="0" /></td>
-        <td><input class="blue-input num" id="p1_neck_paragon" value="0" /></td>
-        <td><input class="blue-input num" id="p1_neck_horadrim" value="0" /></td>
-        <td><input class="blue-input num" id="p1_neck_int" value="106" /></td>
-        <td><input class="blue-input num" id="p1_neck_tourm" value="148" /></td>
-        <td><input class="blue-input num" id="p1_neck_bed" value="0" /></td>
-        <td><input class="blue-input" type="text" id="p1_neck_b1_src" value="Primary dmg" /></td>
-        <td><input class="blue-input num" id="p1_neck_b1_pct" step="0.01" value="0.21" /></td>
-        <td><input class="blue-input" type="text" id="p1_neck_b2_src" value="BSJ" /></td>
-        <td><input class="blue-input num" id="p1_neck_b2_pct" step="0.01" value="0.24" /></td>
-        <td><input class="blue-input" type="text" id="p1_neck_b3_src" value="Shock" /></td>
-        <td><input class="blue-input num" id="p1_neck_b3_pct" step="0.01" value="0.25" /></td>
-        <td><input class="blue-input num" id="p1_neck_cr" step="0.01" value="0.113" /></td>
-        <td><input class="blue-input num" id="p1_neck_crit_ch" step="0.01" value="0.14" /></td>
-        <td><input class="blue-input num" id="p1_neck_crit_dmg" step="0.01" value="0.54" /></td>
-        <td><input class="blue-input num" id="p1_neck_as" step="0.01" value="0" /></td>
-      </tr>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+        <tr>
+          <th>Equipment</th>
+          <th>Item Base DMG</th>
+          <th>Item Base DMG increased</th>
+          <th>Rune increase</th>
+          <th>Socket Rank</th>
+          <th>Paragon DMG</th>
+          <th>Horadrim</th>
+          <th>Intelligence</th>
+          <th>Tourmaline</th>
+          <th>BED</th>
+          <th>Dmg Mod (B1)</th>
+          <th>B1 %</th>
+          <th>Leg Gems (B2)</th>
+          <th>B2 %</th>
+          <th>Buff/Debuff (B3)</th>
+          <th>B3 %</th>
+          <th>CR (B4)</th>
+          <th>Crit Chance</th>
+          <th>Crit Damage</th>
+          <th>Attack Speed</th>
+        </tr>
+        </thead>
+        <tbody id="p1_equipment_body">
+          <!-- PHASE 1 EQUIPMENT ROWS -->
+          <tr class="equip-row" data-slot="neck">
+            <td class="item-label">Neck</td>
+            <td><input class="blue-input num" id="p1_neck_base" value="8880" /></td>
+            <td><input class="blue-input num" id="p1_neck_base_inc" value="12" /></td>
+            <td><input class="blue-input num" id="p1_neck_rune" value="0" /></td>
+            <td><input class="blue-input num" id="p1_neck_socket" value="0" /></td>
+            <td><input class="blue-input num" id="p1_neck_paragon" value="0" /></td>
+            <td><input class="blue-input num" id="p1_neck_horadrim" value="0" /></td>
+            <td><input class="blue-input num" id="p1_neck_int" value="106" /></td>
+            <td><input class="blue-input num" id="p1_neck_tourm" value="148" /></td>
+            <td><input class="blue-input num" id="p1_neck_bed" value="0" /></td>
+            <td><input class="blue-input" type="text" id="p1_neck_b1_src" value="Primary dmg" /></td>
+            <td><input class="blue-input num" id="p1_neck_b1_pct" step="0.01" value="0.21" /></td>
+            <td><input class="blue-input" type="text" id="p1_neck_b2_src" value="BSJ" /></td>
+            <td><input class="blue-input num" id="p1_neck_b2_pct" step="0.01" value="0.24" /></td>
+            <td><input class="blue-input" type="text" id="p1_neck_b3_src" value="Shock" /></td>
+            <td><input class="blue-input num" id="p1_neck_b3_pct" step="0.01" value="0.25" /></td>
+            <td><input class="blue-input num" id="p1_neck_cr" step="0.01" value="0.113" /></td>
+            <td><input class="blue-input num" id="p1_neck_crit_ch" step="0.01" value="0.14" /></td>
+            <td><input class="blue-input num" id="p1_neck_crit_dmg" step="0.01" value="0.54" /></td>
+            <td><input class="blue-input num" id="p1_neck_as" step="0.01" value="0" /></td>
+          </tr>
 
-      <tr class="equip-row" data-slot="ring1">
-        <td class="item-label">Ring 1</td>
-        <td><input class="blue-input num" id="p1_ring1_base" value="101" /></td>
-        <td><input class="blue-input num" id="p1_ring1_base_inc" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring1_rune" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring1_socket" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring1_paragon" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring1_horadrim" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring1_int" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring1_tourm" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring1_bed" value="0" /></td>
-        <td><input class="blue-input" type="text" id="p1_ring1_b1_src" value="Dmg done to ESLOC" /></td>
-        <td><input class="blue-input num" id="p1_ring1_b1_pct" step="0.01" value="0.80" /></td>
-        <td><input class="blue-input" type="text" id="p1_ring1_b2_src" value="Bottled Hope" /></td>
-        <td><input class="blue-input num" id="p1_ring1_b2_pct" step="0.01" value="0.24" /></td>
-        <td><input class="blue-input" type="text" id="p1_ring1_b3_src" value="Posion Golem Debuff" /></td>
-        <td><input class="blue-input num" id="p1_ring1_b3_pct" step="0.01" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring1_cr" step="0.01" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring1_crit_ch" step="0.01" value="0.19" /></td>
-        <td><input class="blue-input num" id="p1_ring1_crit_dmg" step="0.01" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring1_as" step="0.01" value="0" /></td>
-      </tr>
+          <tr class="equip-row" data-slot="ring1">
+            <td class="item-label">Ring 1</td>
+            <td><input class="blue-input num" id="p1_ring1_base" value="101" /></td>
+            <td><input class="blue-input num" id="p1_ring1_base_inc" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring1_rune" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring1_socket" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring1_paragon" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring1_horadrim" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring1_int" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring1_tourm" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring1_bed" value="0" /></td>
+            <td><input class="blue-input" type="text" id="p1_ring1_b1_src" value="Dmg done to ESLOC" /></td>
+            <td><input class="blue-input num" id="p1_ring1_b1_pct" step="0.01" value="0.80" /></td>
+            <td><input class="blue-input" type="text" id="p1_ring1_b2_src" value="Bottled Hope" /></td>
+            <td><input class="blue-input num" id="p1_ring1_b2_pct" step="0.01" value="0.24" /></td>
+            <td><input class="blue-input" type="text" id="p1_ring1_b3_src" value="Posion Golem Debuff" /></td>
+            <td><input class="blue-input num" id="p1_ring1_b3_pct" step="0.01" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring1_cr" step="0.01" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring1_crit_ch" step="0.01" value="0.19" /></td>
+            <td><input class="blue-input num" id="p1_ring1_crit_dmg" step="0.01" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring1_as" step="0.01" value="0" /></td>
+          </tr>
 
-      <!-- For brevity, other items are initialized as 0 and can be filled to mirror your sheet -->
+          <tr class="equip-row" data-slot="ring2">
+            <td class="item-label">Ring 2</td>
+            <td><input class="blue-input num" id="p1_ring2_base" value="920" /></td>
+            <td><input class="blue-input num" id="p1_ring2_base_inc" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring2_rune" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring2_socket" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring2_paragon" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring2_horadrim" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring2_int" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring2_tourm" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring2_bed" value="0" /></td>
+            <td><input class="blue-input" type="text" id="p1_ring2_b1_src" value="Essence Mastery" /></td>
+            <td><input class="blue-input num" id="p1_ring2_b1_pct" step="0.01" value="0.2" /></td>
+            <td><input class="blue-input" type="text" id="p1_ring2_b2_src" value="Pain Clasp" /></td>
+            <td><input class="blue-input num" id="p1_ring2_b2_pct" step="0.01" value="0" /></td>
+            <td><input class="blue-input" type="text" id="p1_ring2_b3_src" value="Lingering Wounds" /></td>
+            <td><input class="blue-input num" id="p1_ring2_b3_pct" step="0.01" value="0.388" /></td>
+            <td><input class="blue-input num" id="p1_ring2_cr" step="0.01" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring2_crit_ch" step="0.01" value="0.24" /></td>
+            <td><input class="blue-input num" id="p1_ring2_crit_dmg" step="0.01" value="0" /></td>
+            <td><input class="blue-input num" id="p1_ring2_as" step="0.01" value="0" /></td>
+          </tr>
 
-      <tr class="equip-row" data-slot="ring2">
-        <td class="item-label">Ring 2</td>
-        <td><input class="blue-input num" id="p1_ring2_base" value="920" /></td>
-        <td><input class="blue-input num" id="p1_ring2_base_inc" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring2_rune" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring2_socket" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring2_paragon" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring2_horadrim" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring2_int" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring2_tourm" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring2_bed" value="0" /></td>
-        <td><input class="blue-input" type="text" id="p1_ring2_b1_src" value="Essence Mastery" /></td>
-        <td><input class="blue-input num" id="p1_ring2_b1_pct" step="0.01" value="0.2" /></td>
-        <td><input class="blue-input" type="text" id="p1_ring2_b2_src" value="Pain Clasp" /></td>
-        <td><input class="blue-input num" id="p1_ring2_b2_pct" step="0.01" value="0" /></td>
-        <td><input class="blue-input" type="text" id="p1_ring2_b3_src" value="Lingering Wounds" /></td>
-        <td><input class="blue-input num" id="p1_ring2_b3_pct" step="0.01" value="0.388" /></td>
-        <td><input class="blue-input num" id="p1_ring2_cr" step="0.01" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring2_crit_ch" step="0.01" value="0.24" /></td>
-        <td><input class="blue-input num" id="p1_ring2_crit_dmg" step="0.01" value="0" /></td>
-        <td><input class="blue-input num" id="p1_ring2_as" step="0.01" value="0" /></td>
-      </tr>
-
-      <!-- You can continue to pre-fill all remaining slots based on your sheet:
-           gloves, waist, feet, head, chest, shoulder, legs, mh1, oh1, mh2, oh2, wrist1, wrist2, tableau, dr -->
-      </tbody>
-    </table>
+          <!-- Additional slots remain unchanged from your original file -->
+        </tbody>
+      </table>
+    </div>
 
     <div class="section-title">Outputs</div>
     <div class="outputs">
@@ -667,7 +664,7 @@
     <div class="section-title">General modifiers</div>
     <div class="grid-modifiers">
       <label for="p2_seconds">2nd phase (seconds)</label>
-      <input class="blue-input num" id="p2_seconds" type="number" step="0.01" value="8.46" />
+      <input class="blue-input num" id="p2_seconds" type="number" step="0.01" value="10" />
 
       <label for="p2_resonance">Resonance</label>
       <input class="blue-input num" id="p2_resonance" type="number" step="1" value="7233" />
@@ -695,59 +692,61 @@
     </div>
 
     <div class="section-title">Equipment</div>
-    <table>
-      <thead>
-      <tr>
-        <th>Equipment</th>
-        <th>Item Base DMG</th>
-        <th>Item Base DMG increased</th>
-        <th>Rune increase</th>
-        <th>Socket Rank</th>
-        <th>Paragon DMG</th>
-        <th>Horadrim</th>
-        <th>Intelligence</th>
-        <th>Tourmaline</th>
-        <th>BED</th>
-        <th>Dmg Mod (B1)</th>
-        <th>B1 %</th>
-        <th>Leg Gems (B2)</th>
-        <th>B2 %</th>
-        <th>Buff/Debuff (B3)</th>
-        <th>B3 %</th>
-        <th>CR (B4)</th>
-        <th>Crit Chance</th>
-        <th>Crit Damage</th>
-        <th>Attack Speed</th>
-      </tr>
-      </thead>
-      <tbody id="p2_equipment_body">
-      <!-- For Phase 2, values mirror Phase 1 by default; you can adjust as needed -->
-      <tr class="equip-row" data-slot="neck">
-        <td class="item-label">Neck</td>
-        <td><input class="blue-input num" id="p2_neck_base" value="8880" /></td>
-        <td><input class="blue-input num" id="p2_neck_base_inc" value="12" /></td>
-        <td><input class="blue-input num" id="p2_neck_rune" value="0" /></td>
-        <td><input class="blue-input num" id="p2_neck_socket" value="0" /></td>
-        <td><input class="blue-input num" id="p2_neck_paragon" value="0" /></td>
-        <td><input class="blue-input num" id="p2_neck_horadrim" value="0" /></td>
-        <td><input class="blue-input num" id="p2_neck_int" value="106" /></td>
-        <td><input class="blue-input num" id="p2_neck_tourm" value="148" /></td>
-        <td><input class="blue-input num" id="p2_neck_bed" value="0" /></td>
-        <td><input class="blue-input" type="text" id="p2_neck_b1_src" value="Primary dmg" /></td>
-        <td><input class="blue-input num" id="p2_neck_b1_pct" step="0.01" value="0.21" /></td>
-        <td><input class="blue-input" type="text" id="p2_neck_b2_src" value="BSJ" /></td>
-        <td><input class="blue-input num" id="p2_neck_b2_pct" step="0.01" value="0.24" /></td>
-        <td><input class="blue-input" type="text" id="p2_neck_b3_src" value="Shock" /></td>
-        <td><input class="blue-input num" id="p2_neck_b3_pct" step="0.01" value="0.25" /></td>
-        <td><input class="blue-input num" id="p2_neck_cr" step="0.01" value="0.113" /></td>
-        <td><input class="blue-input num" id="p2_neck_crit_ch" step="0.01" value="0.14" /></td>
-        <td><input class="blue-input num" id="p2_neck_crit_dmg" step="0.01" value="0.54" /></td>
-        <td><input class="blue-input num" id="p2_neck_as" step="0.01" value="0" /></td>
-      </tr>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+        <tr>
+          <th>Equipment</th>
+          <th>Item Base DMG</th>
+          <th>Item Base DMG increased</th>
+          <th>Rune increase</th>
+          <th>Socket Rank</th>
+          <th>Paragon DMG</th>
+          <th>Horadrim</th>
+          <th>Intelligence</th>
+          <th>Tourmaline</th>
+          <th>BED</th>
+          <th>Dmg Mod (B1)</th>
+          <th>B1 %</th>
+          <th>Leg Gems (B2)</th>
+          <th>B2 %</th>
+          <th>Buff/Debuff (B3)</th>
+          <th>B3 %</th>
+          <th>CR (B4)</th>
+          <th>Crit Chance</th>
+          <th>Crit Damage</th>
+          <th>Attack Speed</th>
+        </tr>
+        </thead>
+        <tbody id="p2_equipment_body">
+          <!-- PHASE 2 EQUIPMENT ROWS (unchanged from your original structure) -->
+          <tr class="equip-row" data-slot="neck">
+            <td class="item-label">Neck</td>
+            <td><input class="blue-input num" id="p2_neck_base" value="8880" /></td>
+            <td><input class="blue-input num" id="p2_neck_base_inc" value="12" /></td>
+            <td><input class="blue-input num" id="p2_neck_rune" value="0" /></td>
+            <td><input class="blue-input num" id="p2_neck_socket" value="0" /></td>
+            <td><input class="blue-input num" id="p2_neck_paragon" value="0" /></td>
+            <td><input class="blue-input num" id="p2_neck_horadrim" value="0" /></td>
+            <td><input class="blue-input num" id="p2_neck_int" value="106" /></td>
+            <td><input class="blue-input num" id="p2_neck_tourm" value="148" /></td>
+            <td><input class="blue-input num" id="p2_neck_bed" value="0" /></td>
+            <td><input class="blue-input" type="text" id="p2_neck_b1_src" value="Primary dmg" /></td>
+            <td><input class="blue-input num" id="p2_neck_b1_pct" step="0.01" value="0.21" /></td>
+            <td><input class="blue-input" type="text" id="p2_neck_b2_src" value="BSJ" /></td>
+            <td><input class="blue-input num" id="p2_neck_b2_pct" step="0.01" value="0.24" /></td>
+            <td><input class="blue-input" type="text" id="p2_neck_b3_src" value="Shock" /></td>
+            <td><input class="blue-input num" id="p2_neck_b3_pct" step="0.01" value="0.25" /></td>
+            <td><input class="blue-input num" id="p2_neck_cr" step="0.01" value="0.113" /></td>
+            <td><input class="blue-input num" id="p2_neck_crit_ch" step="0.01" value="0.14" /></td>
+            <td><input class="blue-input num" id="p2_neck_crit_dmg" step="0.01" value="0.54" /></td>
+            <td><input class="blue-input num" id="p2_neck_as" step="0.01" value="0" /></td>
+          </tr>
 
-      <!-- Same pattern as Phase 1; you can mirror or adjust values as in your sheet -->
-      </tbody>
-    </table>
+          <!-- Additional Phase 2 slots remain unchanged -->
+        </tbody>
+      </table>
+    </div>
 
     <div class="section-title">Outputs</div>
     <div class="outputs">
@@ -781,7 +780,7 @@
 </div>
 
 <script>
-  // Utility to safely read numeric values
+  /* --- Utility Functions --- */
   function getNum(id) {
     const el = document.getElementById(id);
     if (!el) return 0;
@@ -789,7 +788,6 @@
     return isNaN(v) ? 0 : v;
   }
 
-  // Pulse helper for outputs
   function setTextAndPulse(id, value, decimals = 2) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -803,7 +801,6 @@
     }
   }
 
-  // Sum helper over slots for a given phase and suffix
   const SLOTS = [
     "neck","ring1","ring2",
     "gloves","waist","feet",
@@ -815,59 +812,48 @@
   function sumPhase(phase, suffix) {
     return SLOTS.reduce((acc, slot) => {
       const id = `${phase}_${slot}_${suffix}`;
-      const v = getNum(id);
-      return acc + v;
+      return acc + getNum(id);
     }, 0);
   }
 
-  // Main recalculation
+  /* --- Main Recalculation --- */
   function recalc() {
-    // Phase durations (A3 and A28 in sheet)
-    const p1_seconds = getNum("p1_seconds"); // A3
-    const p2_seconds = getNum("p2_seconds"); // A28
+    const p1_seconds = getNum("p1_seconds");
+    const p2_seconds = getNum("p2_seconds");
 
-    // Totals rows analogues for Phase 1
-    const p1_total_base = sumPhase("p1","base");   // ~B26
-    const p1_total_rune = sumPhase("p1","rune");   // ~D26
-    const p1_total_socket = sumPhase("p1","socket"); // ~E26
-    const p1_total_paragon = sumPhase("p1","paragon"); // ~F26
-    const p1_total_horadrim = sumPhase("p1","horadrim"); // ~G26
-    const p1_total_int = sumPhase("p1","int");     // ~H26
-    const p1_total_tourm = sumPhase("p1","tourm"); // ~I26
-    const p1_total_bed = sumPhase("p1","bed");     // ~J26
-    const p1_total_b1pct = sumPhase("p1","b1_pct"); // ~L26
-    const p1_total_b2pct = sumPhase("p1","b2_pct"); // ~N26
-    const p1_total_b3pct = sumPhase("p1","b3_pct"); // ~P26
-    const p1_total_b4 = sumPhase("p1","cr");       // ~Q26-ish (CR)
-    const p1_total_critch = SLOTS.reduce((acc, s)=>acc+getNum(`p1_${s}_crit_ch`),0); // ~S26
-    const p1_total_as = SLOTS.reduce((acc, s)=>acc+getNum(`p1_${s}_as`),0); // ~W26
+    /* --- Phase 1 Totals --- */
+    const p1_total_base = sumPhase("p1","base");
+    const p1_total_rune = sumPhase("p1","rune");
+    const p1_total_socket = sumPhase("p1","socket");
+    const p1_total_paragon = sumPhase("p1","paragon");
+    const p1_total_horadrim = sumPhase("p1","horadrim");
+    const p1_total_int = sumPhase("p1","int");
+    const p1_total_tourm = sumPhase("p1","tourm");
+    const p1_total_bed = sumPhase("p1","bed");
+    const p1_total_b1pct = sumPhase("p1","b1_pct");
+    const p1_total_b2pct = sumPhase("p1","b2_pct");
+    const p1_total_b3pct = sumPhase("p1","b3_pct");
+    const p1_total_b4 = sumPhase("p1","cr");
+    const p1_total_critch = SLOTS.reduce((acc, s)=>acc+getNum(`p1_${s}_crit_ch`),0);
+    const p1_total_as = SLOTS.reduce((acc, s)=>acc+getNum(`p1_${s}_as`),0);
 
-    // Caps similar to your sheet (min with 1 or 2.2)
-    const p1_b1_sum = p1_total_b1pct;      // L26
-    const p1_b2_sum = p1_total_b2pct;      // N26
-    const p1_b3_sum = p1_total_b3pct;      // P26
-    const p1_b4_sum = Math.min(p1_total_b4, 1);    // Q26 cap 1
-    const p1_crit_sum = Math.min(p1_total_critch, 1); // S26 cap 1
-    const p1_as_sum = Math.min(p1_total_as, 2.2);  // W26 cap 2.2
+    const p1_b1_sum = p1_total_b1pct;
+    const p1_b2_sum = p1_total_b2pct;
+    const p1_b3_sum = p1_total_b3pct;
+    const p1_b4_sum = Math.min(p1_total_b4, 1);
+    const p1_crit_sum = Math.min(p1_total_critch, 1);
+    const p1_as_sum = Math.min(p1_total_as, 2.2);
 
-    // M3 and N3 etc approximations
     const resonance1 = getNum("p1_resonance");
     const vithus_bed1 = getNum("p1_vithus_bed");
     const baron_hed1 = getNum("p1_baron_hed");
     const potency_hed1 = getNum("p1_potency_hed");
     const misery_hed1 = getNum("p1_misery_hed");
-
-    // L3 = CDR Score, HED / BED from sheet
     const cdrScore1 = getNum("p1_cdr_score");
 
-    // BED modifier ~ (1+J26)*(1+N3) from sheet
     const bedMod1 = (1 + p1_total_bed) * (1 + vithus_bed1);
-    // HED Modifier ~(1+O3)*(1+P3)*(1+Q3)
     const hedMod1 = (1 + baron_hed1) * (1 + potency_hed1) * (1 + misery_hed1);
 
-    // Base DMG Phase 1 using your sheet formula skeleton:
-    // B26+(B26*L3*0.0005)+I26+H26*0.3+F26+G26+(B10*E10*0.03)+ ... etc
-    // Approximated: base + resonance scaling + ints + paragon/horadrim + socket interactions
     const p1_base_dmg =
       p1_total_base +
       (p1_total_base * cdrScore1 * 0.0005) +
@@ -875,26 +861,22 @@
       p1_total_int * 0.3 +
       p1_total_paragon +
       p1_total_horadrim +
-      p1_total_rune; // simplified inclusion for rune / socket combination
+      p1_total_rune;
 
-    // Normal / Crit / Avg / Banner DMG from your structures:
-    // Normal: L5*(1+L26)*(1+N26)*(1+P26)*(1+Q7)
-    // We'll treat L5 as base_dmg * resonance1 * bedMod1 * hedMod1
     const p1_L5 = p1_base_dmg * (1 + resonance1 * 0.0005) * bedMod1 * hedMod1;
     const p1_normal = p1_L5 * (1 + p1_b1_sum) * (1 + p1_b2_sum) * (1 + p1_b3_sum) * (1 + p1_b4_sum);
-    // Crit: M5*(1+U26) where M5 ~ L5 * crit multiplier
+
     const p1_crit_mult = 1 + p1_total_critch * (1 + p1_crit_sum);
     const p1_M5 = p1_L5 * p1_crit_mult;
     const p1_crit = p1_M5 * (1 + p1_crit_sum);
-    // Avg: L5*X5 (X5 mixes crit/normal via chance)
-    const avgCritChance1 = p1_crit_sum; // using capped crit chance
+
+    const avgCritChance1 = p1_crit_sum;
     const p1_X5 = (1 - avgCritChance1) + avgCritChance1 * (p1_crit / Math.max(p1_normal,1));
     const p1_avg = p1_L5 * p1_X5;
-    // Banner: (M5*(1+U26-(0.65-0.65)))*V5 ~ M5*(1+AS)*some factor
+
     const p1_V5 = 1 + p1_as_sum;
     const p1_banner = p1_M5 * p1_V5;
 
-    // B1..B4 scores: 1 + sums
     const p1_b1_score = 1 + p1_b1_sum;
     const p1_b2_score = 1 + p1_b2_sum;
     const p1_b3_score = 1 + p1_b3_sum;
@@ -902,11 +884,9 @@
     const p1_crit_score = 1 + p1_crit_sum * p1_crit_mult;
     const p1_as_score = 1 + p1_as_sum;
 
-    // Build Score: Q5*R5*S5*T5*U5, approximated as product of the main multipliers
     const p1_build = p1_b1_score * p1_b2_score * p1_b3_score * p1_b4_score * p1_crit_score;
     const p1_build_as = p1_build * p1_as_score;
 
-    // Write Phase 1 outputs
     setTextAndPulse("p1_base_dmg", p1_base_dmg, 1);
     setTextAndPulse("p1_normal_dmg", p1_normal, 0);
     setTextAndPulse("p1_crit_dmg", p1_crit, 0);
@@ -921,7 +901,7 @@
     setTextAndPulse("p1_build_score", p1_build, 3);
     setTextAndPulse("p1_build_score_as", p1_build_as, 3);
 
-    // Phase 2 – mirror structure but use phase 2 totals
+    /* --- Phase 2 Totals --- */
     const p2_total_base = sumPhase("p2","base");
     const p2_total_rune = sumPhase("p2","rune");
     const p2_total_socket = sumPhase("p2","socket");
@@ -1001,7 +981,7 @@
     setTextAndPulse("p2_build_score", p2_build, 3);
     setTextAndPulse("p2_build_score_as", p2_build_as, 3);
 
-    // Final 20 sec scores, mirroring (W5*A3+W30*A28)/20 and (X5*A3+X30*A28)/20
+    /* --- Final 20-second Scores (unchanged formulas) --- */
     const score20 = ((p1_build * p1_seconds) + (p2_build * p2_seconds)) / 20;
     const score20_as = ((p1_build_as * p1_seconds) + (p2_build_as * p2_seconds)) / 20;
 
@@ -1009,7 +989,7 @@
     setTextAndPulse("score_20sec_as", score20_as, 2);
   }
 
-  // Attach listeners for live update
+  /* --- Input Listeners --- */
   function attachListeners() {
     const inputs = document.querySelectorAll("input.num");
     inputs.forEach(inp => {
