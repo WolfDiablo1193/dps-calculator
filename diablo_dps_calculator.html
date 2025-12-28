@@ -1,304 +1,1031 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Diablo Immortal DPS Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #101018;
-            color: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-        }
+  <meta charset="UTF-8" />
+  <title>Diablo Immortal DPS Calculator</title>
 
-        h1, h2 {
-            text-align: center;
-            color: #f0c96b;
-        }
+  <!-- Hybrid fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-        .section {
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background: #181824;
-        }
+  <style>
+    :root {
+      --bg-main: #050609;
+      --bg-stone: #111319;
+      --bg-panel: #141720;
+      --bg-panel-alt: #181b26;
+      --accent-arcane: #3b82f6;
+      --accent-arcane-soft: rgba(59,130,246,0.4);
+      --accent-hell: #ef4444;
+      --accent-hell-soft: rgba(239,68,68,0.45);
+      --accent-gold: #fbbf24;
+      --accent-gold-soft: rgba(251,191,36,0.35);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: #272b38;
+      --shadow-deep: 0 0 40px rgba(0,0,0,0.75);
+    }
 
-        .section-title {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: #f0c96b;
-            border-bottom: 1px solid #333;
-            padding-bottom: 5px;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        .field-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at top left, rgba(239,68,68,0.14), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(59,130,246,0.16), transparent 60%),
+        radial-gradient(circle at top right, rgba(251,191,36,0.12), transparent 55%),
+        #020308;
+      min-height: 100vh;
+    }
 
-        .field {
-            flex: 1 1 180px;
-            min-width: 160px;
-        }
+    /* Cathedral vignette */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(0,0,0,0.75), transparent 60%),
+        radial-gradient(circle at 90% 0%, rgba(0,0,0,0.75), transparent 60%),
+        radial-gradient(circle at 50% 120%, rgba(0,0,0,0.9), transparent 70%);
+      mix-blend-mode: multiply;
+      z-index: -1;
+    }
 
-        label {
-            display: block;
-            font-size: 0.85rem;
-            margin-bottom: 3px;
-            color: #ccccff;
-        }
+    h1 {
+      font-family: "Cinzel", serif;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 1.8rem;
+      margin: 0 0 4px 0;
+      color: #f9fafb;
+      text-shadow:
+        0 0 8px rgba(0,0,0,0.9),
+        0 0 16px rgba(0,0,0,0.9),
+        0 0 20px rgba(248,250,252,0.16);
+    }
 
-        input[type="number"] {
-            width: 100%;
-            padding: 6px 8px;
-            border-radius: 4px;
-            border: 1px solid #555;
-            background: #0f172a;
-            color: #e5e7eb;
-            box-sizing: border-box;
-        }
+    .subtitle {
+      font-family: "Cinzel", serif;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
 
-        input[type="number"].blue-input {
-            background: #0b1b33;
-            border-color: #3b82f6;
-        }
+    .title-frame {
+      max-width: 900px;
+      margin: 0 auto 18px auto;
+      padding: 12px 18px 16px 18px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at top, rgba(251,191,36,0.07), transparent 60%),
+        linear-gradient(to bottom, rgba(15,23,42,0.95), rgba(12,16,26,0.98));
+      border: 1px solid rgba(148,163,184,0.35);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 20px 40px rgba(0,0,0,0.75);
+      position: relative;
+      overflow: hidden;
+    }
 
-        .hint {
-            font-size: 0.75rem;
-            color: #9ca3af;
-        }
+    .title-frame::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid rgba(248,250,252,0.04);
+      pointer-events: none;
+    }
 
-        button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin: 15px 0;
-            background: #3b82f6;
-            color: #f9fafb;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
+    .title-frame::after {
+      content: "";
+      position: absolute;
+      top: -120%;
+      left: 25%;
+      width: 50%;
+      height: 340%;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(251,191,36,0.18), transparent 60%);
+      opacity: 0.55;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
 
-        button:hover {
-            background: #2563eb;
-        }
+    .phase-container {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
 
-        .result-box {
-            border-radius: 8px;
-            padding: 15px;
-            background: #111827;
-            border: 1px solid #4b5563;
-            margin-top: 10px;
-        }
+    .phase {
+      flex: 1;
+      background: radial-gradient(circle at top, rgba(17,24,39,0.85), rgba(10,14,22,0.98));
+      border-radius: 16px;
+      border: 1px solid rgba(55,65,81,0.8);
+      box-shadow: var(--shadow-deep);
+      padding: 14px 14px 16px 14px;
+      position: relative;
+      overflow: hidden;
+    }
 
-        .result-main {
-            font-size: 1.4rem;
-            color: #fbbf24;
-            margin-bottom: 6px;
-        }
+    .phase::before {
+      content: "";
+      position: absolute;
+      inset: -15%;
+      opacity: 0.33;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
 
-        .result-sub {
-            font-size: 0.9rem;
-            color: #9ca3af;
-        }
+    .phase.phase1::before {
+      background:
+        radial-gradient(circle at 15% 0%, rgba(59,130,246,0.22), transparent 60%),
+        radial-gradient(circle at 85% 120%, rgba(37,99,235,0.2), transparent 60%);
+      animation: arcaneRift 26s linear infinite;
+    }
 
-        .small-note {
-            font-size: 0.8rem;
-            color: #9ca3af;
-            margin-top: 8px;
-        }
+    .phase.phase2::before {
+      background:
+        radial-gradient(circle at 10% 0%, rgba(239,68,68,0.25), transparent 60%),
+        radial-gradient(circle at 90% 120%, rgba(248,113,113,0.2), transparent 60%);
+      animation: infernalRift 26s linear infinite;
+    }
 
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-        }
-    </style>
+    .phase::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid rgba(15,23,42,0.9);
+      pointer-events: none;
+    }
+
+    @keyframes arcaneRift {
+      0% { transform: translate3d(0,0,0) scale(1); }
+      50% { transform: translate3d(-2%,3%,0) scale(1.05); }
+      100% { transform: translate3d(0,0,0) scale(1); }
+    }
+
+    @keyframes infernalRift {
+      0% { transform: translate3d(0,0,0) scale(1); }
+      50% { transform: translate3d(2%,-3%,0) scale(1.04); }
+      100% { transform: translate3d(0,0,0) scale(1); }
+    }
+
+    .phase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .phase-title {
+      font-family: "Cinzel", serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #f9fafb;
+    }
+
+    .phase-tag {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .section-title {
+      font-family: "Cinzel", serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin: 10px 0 4px 0;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(
+        to right,
+        rgba(251,191,36,0.6),
+        rgba(239,68,68,0.4),
+        rgba(59,130,246,0.4),
+        transparent
+      );
+      opacity: 0.8;
+    }
+
+    .grid-modifiers {
+      display: grid;
+      grid-template-columns: 1.25fr 0.9fr;
+      gap: 6px 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-shadow: 0 0 4px rgba(0,0,0,0.65);
+    }
+
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 4px 6px;
+      border-radius: 6px;
+      border: 1px solid #374151;
+      background: radial-gradient(circle at top, #020617, #020617);
+      color: var(--text-main);
+      font-size: 0.8rem;
+      transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease,
+        transform 0.06s ease;
+    }
+
+    input.blue-input {
+      background: radial-gradient(circle at top, #020617, #020617);
+      border-color: rgba(59,130,246,0.8);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,1),
+        0 0 12px rgba(37,99,235,0.5);
+    }
+
+    input.blue-input:focus {
+      outline: none;
+      border-color: var(--accent-gold);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,1),
+        0 0 14px rgba(59,130,246,0.8);
+      transform: translateY(-0.5px);
+    }
+
+    input.blue-input.changed {
+      animation: pulseArcane 0.55s ease-out;
+    }
+
+    @keyframes pulseArcane {
+      0% { box-shadow: 0 0 0 0 rgba(59,130,246,0.9); }
+      40% { box-shadow: 0 0 18px 4px rgba(59,130,246,0.9); }
+      100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+    }
+
+    input[readonly] {
+      background: #020617;
+      border-color: #111827;
+      color: #d1d5db;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.72rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    th, td {
+      border: 1px solid rgba(31,41,55,0.9);
+      padding: 3px 4px;
+      text-align: center;
+    }
+
+    th {
+      background: linear-gradient(to bottom, rgba(15,23,42,0.95), rgba(15,23,42,0.9));
+      color: #e5e7eb;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .item-label {
+      text-align: left;
+      background: linear-gradient(to right, rgba(15,23,42,0.95), rgba(15,23,42,0.7));
+      font-weight: 500;
+      font-size: 0.7rem;
+    }
+
+    tr.equip-row:hover {
+      background: radial-gradient(circle at center, rgba(251,191,36,0.06), transparent 55%);
+    }
+
+    .outputs {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 6px 10px;
+      font-size: 0.8rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .output-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(to right, rgba(15,23,42,0.95), rgba(17,24,39,0.9));
+      border-radius: 6px;
+      padding: 3px 6px;
+      border: 1px solid rgba(55,65,81,0.9);
+    }
+
+    .output-row span.label {
+      color: var(--text-muted);
+    }
+
+    .output-row span.value {
+      min-width: 80px;
+      text-align: right;
+      font-weight: 600;
+      color: #f9fafb;
+      text-shadow:
+        0 0 6px rgba(0,0,0,0.9),
+        0 0 10px rgba(0,0,0,0.9);
+    }
+
+    .value.pulse {
+      animation: valuePulse 0.5s ease-out;
+    }
+
+    @keyframes valuePulse {
+      0% { color: #f9fafb; text-shadow: 0 0 4px rgba(251,191,36,0.2); }
+      25% { color: #fef9c3; text-shadow: 0 0 18px rgba(251,191,36,0.9); }
+      100% { color: #f9fafb; text-shadow: 0 0 6px rgba(0,0,0,0.9); }
+    }
+
+    .footer {
+      max-width: 900px;
+      margin: 18px auto 0 auto;
+      padding: 12px 16px 16px 16px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at top, rgba(251,191,36,0.1), transparent 60%),
+        linear-gradient(to bottom, rgba(15,23,42,0.96), rgba(12,16,26,0.98));
+      border: 1px solid rgba(148,163,184,0.4);
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 18px 36px rgba(0,0,0,0.85);
+      display: flex;
+      justify-content: center;
+      gap: 46px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(251,191,36,0.24), transparent 65%);
+      opacity: 0.5;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .footer-beam {
+      position: absolute;
+      inset: -40px 45%;
+      background:
+        linear-gradient(to bottom,
+          rgba(248,250,252,0.02),
+          rgba(251,191,36,0.5),
+          rgba(253,224,71,0.02)
+        );
+      filter: blur(1px);
+      opacity: 0.75;
+      mix-blend-mode: screen;
+      animation: legendaryBeam 3.4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes legendaryBeam {
+      0% { transform: translateY(10px) scaleY(0.9); opacity: 0.55; }
+      40% { transform: translateY(0) scaleY(1.1); opacity: 0.95; }
+      100% { transform: translateY(10px) scaleY(0.9); opacity: 0.55; }
+    }
+
+    .footer-block {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-block span.label {
+      font-family: "Cinzel", serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+    }
+
+    .footer-block span.value {
+      display: block;
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-top: 4px;
+      color: #fef9c3;
+      text-shadow:
+        0 0 10px rgba(0,0,0,0.95),
+        0 0 18px rgba(251,191,36,0.8);
+    }
+
+    .footer-block span.value.pulse {
+      animation: valuePulse 0.55s ease-out;
+    }
+
+    @media (max-width: 1100px) {
+      .phase-container {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 16px;
+      }
+      .title-frame {
+        padding: 10px 12px 14px 12px;
+      }
+      h1 {
+        font-size: 1.4rem;
+      }
+      .grid-modifiers {
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+      .footer {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .footer-beam {
+        inset: -40px 35%;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<h1>Diablo Immortal DPS Calculator</h1>
-<h2>Based on Auroth-style DMG breakdown</h2>
-
-<div class="section">
-    <div class="section-title">1. Base Damage Inputs</div>
-    <div class="field-group">
-        <div class="field">
-            <label for="totalBaseDmg">Total Item Base DMG
-                <div class="hint">Sum of all item base damage (E column)</div>
-            </label>
-            <input id="totalBaseDmg" type="number" class="blue-input" value="0">
-        </div>
-        <div class="field">
-            <label for="itemBaseIncreasePct">Item Base DMG increased % (F)</label>
-            <input id="itemBaseIncreasePct" type="number" class="blue-input" value="0">
-        </div>
-        <div class="field">
-            <label for="gloveGemRanks">Total Normal Gem ranks in Gloves (G)</label>
-            <input id="gloveGemRanks" type="number" class="blue-input" value="0">
-        </div>
-    </div>
+<div class="title-frame">
+  <h1>Diablo Immortal DPS Calculator</h1>
+  <div class="subtitle">Auroth damage engine · twin-phase rift analysis</div>
 </div>
 
-<div class="section">
-    <div class="section-title">2. Extra Flat Damage Sources</div>
-    <div class="field-group">
-        <div class="field">
-            <label for="paragonDmg">Paragon DMG (H)</label>
-            <input id="paragonDmg" type="number" class="blue-input" value="0">
-        </div>
-        <div class="field">
-            <label for="horadrimDmg">Legacy of the Horadrim DMG (I)</label>
-            <input id="horadrimDmg" type="number" class="blue-input" value="0">
-        </div>
-        <div class="field">
-            <label for="intStrDmg">INT / STR / Tableau / Demonic Remains DMG (J)</label>
-            <input id="intStrDmg" type="number" class="blue-input" value="0">
-        </div>
-        <div class="field">
-            <label for="tourmalineDmg">Tourmaline DMG (K)</label>
-            <input id="tourmalineDmg" type="number" class="blue-input" value="0">
-        </div>
+<div class="phase-container">
+
+  <!-- PHASE 1 -->
+  <div class="phase phase1" id="phase1">
+    <div class="phase-header">
+      <div class="phase-title">Phase I</div>
+      <div class="phase-tag">Arcane Rift Window</div>
     </div>
+
+    <div class="section-title">General modifiers</div>
+    <div class="grid-modifiers">
+      <label for="p1_seconds">1st phase (seconds)</label>
+      <input class="blue-input num" id="p1_seconds" type="number" step="0.01" value="11.54" />
+
+      <label for="p1_resonance">Resonance</label>
+      <input class="blue-input num" id="p1_resonance" type="number" step="1" value="1321" />
+
+      <label for="p1_bed_mod">BED modifier</label>
+      <input class="blue-input num" id="p1_bed_mod" type="number" step="0.01" value="1.0" />
+
+      <label for="p1_vithus_bed">Vithus BED</label>
+      <input class="blue-input num" id="p1_vithus_bed" type="number" step="0.01" value="0.30" />
+
+      <label for="p1_baron_hed">Baron HED</label>
+      <input class="blue-input num" id="p1_baron_hed" type="number" step="0.01" value="0.30" />
+
+      <label for="p1_potency_hed">Potency HED</label>
+      <input class="blue-input num" id="p1_potency_hed" type="number" step="0.01" value="0.35" />
+
+      <label for="p1_misery_hed">Misery Elixir HED</label>
+      <input class="blue-input num" id="p1_misery_hed" type="number" step="0.01" value="0.00" />
+
+      <label for="p1_hed_mod">HED Modifier</label>
+      <input class="blue-input num" id="p1_hed_mod" type="number" step="0.01" value="1.0" />
+
+      <label for="p1_cdr_score">CDR Score</label>
+      <input class="blue-input num" id="p1_cdr_score" type="number" step="0.01" value="1.43" />
+    </div>
+
+    <div class="section-title">Equipment</div>
+    <table>
+      <thead>
+      <tr>
+        <th>Equipment</th>
+        <th>Item Base DMG</th>
+        <th>Item Base DMG increased</th>
+        <th>Rune increase</th>
+        <th>Socket Rank</th>
+        <th>Paragon DMG</th>
+        <th>Horadrim</th>
+        <th>Intelligence</th>
+        <th>Tourmaline</th>
+        <th>BED</th>
+        <th>Dmg Mod (B1)</th>
+        <th>B1 %</th>
+        <th>Leg Gems (B2)</th>
+        <th>B2 %</th>
+        <th>Buff/Debuff (B3)</th>
+        <th>B3 %</th>
+        <th>CR (B4)</th>
+        <th>Crit Chance</th>
+        <th>Crit Damage</th>
+        <th>Attack Speed</th>
+      </tr>
+      </thead>
+      <tbody id="p1_equipment_body">
+      <!-- Each row: data-slot attribute used by JS -->
+      <tr class="equip-row" data-slot="neck">
+        <td class="item-label">Neck</td>
+        <td><input class="blue-input num" id="p1_neck_base" value="8880" /></td>
+        <td><input class="blue-input num" id="p1_neck_base_inc" value="12" /></td>
+        <td><input class="blue-input num" id="p1_neck_rune" value="0" /></td>
+        <td><input class="blue-input num" id="p1_neck_socket" value="0" /></td>
+        <td><input class="blue-input num" id="p1_neck_paragon" value="0" /></td>
+        <td><input class="blue-input num" id="p1_neck_horadrim" value="0" /></td>
+        <td><input class="blue-input num" id="p1_neck_int" value="106" /></td>
+        <td><input class="blue-input num" id="p1_neck_tourm" value="148" /></td>
+        <td><input class="blue-input num" id="p1_neck_bed" value="0" /></td>
+        <td><input class="blue-input" type="text" id="p1_neck_b1_src" value="Primary dmg" /></td>
+        <td><input class="blue-input num" id="p1_neck_b1_pct" step="0.01" value="0.21" /></td>
+        <td><input class="blue-input" type="text" id="p1_neck_b2_src" value="BSJ" /></td>
+        <td><input class="blue-input num" id="p1_neck_b2_pct" step="0.01" value="0.24" /></td>
+        <td><input class="blue-input" type="text" id="p1_neck_b3_src" value="Shock" /></td>
+        <td><input class="blue-input num" id="p1_neck_b3_pct" step="0.01" value="0.25" /></td>
+        <td><input class="blue-input num" id="p1_neck_cr" step="0.01" value="0.113" /></td>
+        <td><input class="blue-input num" id="p1_neck_crit_ch" step="0.01" value="0.14" /></td>
+        <td><input class="blue-input num" id="p1_neck_crit_dmg" step="0.01" value="0.54" /></td>
+        <td><input class="blue-input num" id="p1_neck_as" step="0.01" value="0" /></td>
+      </tr>
+
+      <tr class="equip-row" data-slot="ring1">
+        <td class="item-label">Ring 1</td>
+        <td><input class="blue-input num" id="p1_ring1_base" value="101" /></td>
+        <td><input class="blue-input num" id="p1_ring1_base_inc" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring1_rune" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring1_socket" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring1_paragon" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring1_horadrim" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring1_int" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring1_tourm" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring1_bed" value="0" /></td>
+        <td><input class="blue-input" type="text" id="p1_ring1_b1_src" value="Dmg done to ESLOC" /></td>
+        <td><input class="blue-input num" id="p1_ring1_b1_pct" step="0.01" value="0.80" /></td>
+        <td><input class="blue-input" type="text" id="p1_ring1_b2_src" value="Bottled Hope" /></td>
+        <td><input class="blue-input num" id="p1_ring1_b2_pct" step="0.01" value="0.24" /></td>
+        <td><input class="blue-input" type="text" id="p1_ring1_b3_src" value="Posion Golem Debuff" /></td>
+        <td><input class="blue-input num" id="p1_ring1_b3_pct" step="0.01" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring1_cr" step="0.01" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring1_crit_ch" step="0.01" value="0.19" /></td>
+        <td><input class="blue-input num" id="p1_ring1_crit_dmg" step="0.01" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring1_as" step="0.01" value="0" /></td>
+      </tr>
+
+      <!-- For brevity, other items are initialized as 0 and can be filled to mirror your sheet -->
+
+      <tr class="equip-row" data-slot="ring2">
+        <td class="item-label">Ring 2</td>
+        <td><input class="blue-input num" id="p1_ring2_base" value="920" /></td>
+        <td><input class="blue-input num" id="p1_ring2_base_inc" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring2_rune" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring2_socket" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring2_paragon" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring2_horadrim" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring2_int" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring2_tourm" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring2_bed" value="0" /></td>
+        <td><input class="blue-input" type="text" id="p1_ring2_b1_src" value="Essence Mastery" /></td>
+        <td><input class="blue-input num" id="p1_ring2_b1_pct" step="0.01" value="0.2" /></td>
+        <td><input class="blue-input" type="text" id="p1_ring2_b2_src" value="Pain Clasp" /></td>
+        <td><input class="blue-input num" id="p1_ring2_b2_pct" step="0.01" value="0" /></td>
+        <td><input class="blue-input" type="text" id="p1_ring2_b3_src" value="Lingering Wounds" /></td>
+        <td><input class="blue-input num" id="p1_ring2_b3_pct" step="0.01" value="0.388" /></td>
+        <td><input class="blue-input num" id="p1_ring2_cr" step="0.01" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring2_crit_ch" step="0.01" value="0.24" /></td>
+        <td><input class="blue-input num" id="p1_ring2_crit_dmg" step="0.01" value="0" /></td>
+        <td><input class="blue-input num" id="p1_ring2_as" step="0.01" value="0" /></td>
+      </tr>
+
+      <!-- You can continue to pre-fill all remaining slots based on your sheet:
+           gloves, waist, feet, head, chest, shoulder, legs, mh1, oh1, mh2, oh2, wrist1, wrist2, tableau, dr -->
+      </tbody>
+    </table>
+
+    <div class="section-title">Outputs</div>
+    <div class="outputs">
+      <div class="output-row"><span class="label">Base DMG</span><span class="value" id="p1_base_dmg">0</span></div>
+      <div class="output-row"><span class="label">Normal DMG</span><span class="value" id="p1_normal_dmg">0</span></div>
+      <div class="output-row"><span class="label">Crit DMG</span><span class="value" id="p1_crit_dmg">0</span></div>
+      <div class="output-row"><span class="label">Avg. DMG</span><span class="value" id="p1_avg_dmg">0</span></div>
+      <div class="output-row"><span class="label">Banner DMG</span><span class="value" id="p1_banner_dmg">0</span></div>
+      <div class="output-row"><span class="label">B1 score</span><span class="value" id="p1_b1_score">0</span></div>
+      <div class="output-row"><span class="label">B2 score</span><span class="value" id="p1_b2_score">0</span></div>
+      <div class="output-row"><span class="label">B3 score</span><span class="value" id="p1_b3_score">0</span></div>
+      <div class="output-row"><span class="label">B4 score</span><span class="value" id="p1_b4_score">0</span></div>
+      <div class="output-row"><span class="label">Crit score</span><span class="value" id="p1_crit_score">0</span></div>
+      <div class="output-row"><span class="label">AS Score</span><span class="value" id="p1_as_score">0</span></div>
+      <div class="output-row"><span class="label">Build Score</span><span class="value" id="p1_build_score">0</span></div>
+      <div class="output-row"><span class="label">Build Score with AS</span><span class="value" id="p1_build_score_as">0</span></div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase phase2" id="phase2">
+    <div class="phase-header">
+      <div class="phase-title">Phase II</div>
+      <div class="phase-tag">Infernal Rift Window</div>
+    </div>
+
+    <div class="section-title">General modifiers</div>
+    <div class="grid-modifiers">
+      <label for="p2_seconds">2nd phase (seconds)</label>
+      <input class="blue-input num" id="p2_seconds" type="number" step="0.01" value="8.46" />
+
+      <label for="p2_resonance">Resonance</label>
+      <input class="blue-input num" id="p2_resonance" type="number" step="1" value="7233" />
+
+      <label for="p2_bed_mod">BED modifier</label>
+      <input class="blue-input num" id="p2_bed_mod" type="number" step="0.01" value="1.0" />
+
+      <label for="p2_vithus_bed">Vithus BED</label>
+      <input class="blue-input num" id="p2_vithus_bed" type="number" step="0.01" value="0.30" />
+
+      <label for="p2_baron_hed">Baron HED</label>
+      <input class="blue-input num" id="p2_baron_hed" type="number" step="0.01" value="0.30" />
+
+      <label for="p2_potency_hed">Potency HED</label>
+      <input class="blue-input num" id="p2_potency_hed" type="number" step="0.01" value="0.35" />
+
+      <label for="p2_misery_hed">Misery Elixir HED</label>
+      <input class="blue-input num" id="p2_misery_hed" type="number" step="0.01" value="0.00" />
+
+      <label for="p2_hed_mod">HED Modifier</label>
+      <input class="blue-input num" id="p2_hed_mod" type="number" step="0.01" value="1.0" />
+
+      <label for="p2_cdr_score">CDR Score</label>
+      <input class="blue-input num" id="p2_cdr_score" type="number" step="0.01" value="1.43" />
+    </div>
+
+    <div class="section-title">Equipment</div>
+    <table>
+      <thead>
+      <tr>
+        <th>Equipment</th>
+        <th>Item Base DMG</th>
+        <th>Item Base DMG increased</th>
+        <th>Rune increase</th>
+        <th>Socket Rank</th>
+        <th>Paragon DMG</th>
+        <th>Horadrim</th>
+        <th>Intelligence</th>
+        <th>Tourmaline</th>
+        <th>BED</th>
+        <th>Dmg Mod (B1)</th>
+        <th>B1 %</th>
+        <th>Leg Gems (B2)</th>
+        <th>B2 %</th>
+        <th>Buff/Debuff (B3)</th>
+        <th>B3 %</th>
+        <th>CR (B4)</th>
+        <th>Crit Chance</th>
+        <th>Crit Damage</th>
+        <th>Attack Speed</th>
+      </tr>
+      </thead>
+      <tbody id="p2_equipment_body">
+      <!-- For Phase 2, values mirror Phase 1 by default; you can adjust as needed -->
+      <tr class="equip-row" data-slot="neck">
+        <td class="item-label">Neck</td>
+        <td><input class="blue-input num" id="p2_neck_base" value="8880" /></td>
+        <td><input class="blue-input num" id="p2_neck_base_inc" value="12" /></td>
+        <td><input class="blue-input num" id="p2_neck_rune" value="0" /></td>
+        <td><input class="blue-input num" id="p2_neck_socket" value="0" /></td>
+        <td><input class="blue-input num" id="p2_neck_paragon" value="0" /></td>
+        <td><input class="blue-input num" id="p2_neck_horadrim" value="0" /></td>
+        <td><input class="blue-input num" id="p2_neck_int" value="106" /></td>
+        <td><input class="blue-input num" id="p2_neck_tourm" value="148" /></td>
+        <td><input class="blue-input num" id="p2_neck_bed" value="0" /></td>
+        <td><input class="blue-input" type="text" id="p2_neck_b1_src" value="Primary dmg" /></td>
+        <td><input class="blue-input num" id="p2_neck_b1_pct" step="0.01" value="0.21" /></td>
+        <td><input class="blue-input" type="text" id="p2_neck_b2_src" value="BSJ" /></td>
+        <td><input class="blue-input num" id="p2_neck_b2_pct" step="0.01" value="0.24" /></td>
+        <td><input class="blue-input" type="text" id="p2_neck_b3_src" value="Shock" /></td>
+        <td><input class="blue-input num" id="p2_neck_b3_pct" step="0.01" value="0.25" /></td>
+        <td><input class="blue-input num" id="p2_neck_cr" step="0.01" value="0.113" /></td>
+        <td><input class="blue-input num" id="p2_neck_crit_ch" step="0.01" value="0.14" /></td>
+        <td><input class="blue-input num" id="p2_neck_crit_dmg" step="0.01" value="0.54" /></td>
+        <td><input class="blue-input num" id="p2_neck_as" step="0.01" value="0" /></td>
+      </tr>
+
+      <!-- Same pattern as Phase 1; you can mirror or adjust values as in your sheet -->
+      </tbody>
+    </table>
+
+    <div class="section-title">Outputs</div>
+    <div class="outputs">
+      <div class="output-row"><span class="label">Base DMG</span><span class="value" id="p2_base_dmg">0</span></div>
+      <div class="output-row"><span class="label">Normal DMG</span><span class="value" id="p2_normal_dmg">0</span></div>
+      <div class="output-row"><span class="label">Crit DMG</span><span class="value" id="p2_crit_dmg">0</span></div>
+      <div class="output-row"><span class="label">Avg. DMG</span><span class="value" id="p2_avg_dmg">0</span></div>
+      <div class="output-row"><span class="label">Banner DMG</span><span class="value" id="p2_banner_dmg">0</span></div>
+      <div class="output-row"><span class="label">B1 score</span><span class="value" id="p2_b1_score">0</span></div>
+      <div class="output-row"><span class="label">B2 score</span><span class="value" id="p2_b2_score">0</span></div>
+      <div class="output-row"><span class="label">B3 score</span><span class="value" id="p2_b3_score">0</span></div>
+      <div class="output-row"><span class="label">B4 score</span><span class="value" id="p2_b4_score">0</span></div>
+      <div class="output-row"><span class="label">Crit score</span><span class="value" id="p2_crit_score">0</span></div>
+      <div class="output-row"><span class="label">AS Score</span><span class="value" id="p2_as_score">0</span></div>
+      <div class="output-row"><span class="label">Build Score</span><span class="value" id="p2_build_score">0</span></div>
+      <div class="output-row"><span class="label">Build Score with AS</span><span class="value" id="p2_build_score_as">0</span></div>
+    </div>
+  </div>
 </div>
 
-<div class="section">
-    <div class="section-title">3. Resonance & Bracket DMG Modifiers</div>
-    <div class="field-group">
-        <div class="field">
-            <label for="resonance">Resonance</label>
-            <input id="resonance" type="number" class="blue-input" value="0">
-        </div>
-        <div class="field">
-            <label for="b1Pct">Bracket 1 % – Normal DMG modifiers</label>
-            <div class="hint">Primary dmg, Shepherd, WB Attacker, etc.</div>
-            <input id="b1Pct" type="number" class="blue-input" value="6">
-        </div>
-        <div class="field">
-            <label for="b2Pct">Bracket 2 % – Legendary Gem DMG</label>
-            <input id="b2Pct" type="number" class="blue-input" value="0">
-        </div>
-        <div class="field">
-            <label for="b3Pct">Bracket 3 % – Buffs / Debuffs</label>
-            <div class="hint">Bone Wall, Poison Golem, Monk buffs, etc.</div>
-            <input id="b3Pct" type="number" class="blue-input" value="0">
-        </div>
-        <div class="field">
-            <label for="b4Pct">Bracket 4 % – Combat Rating DMG</label>
-            <div class="hint">Often capped at ~11.3%</div>
-            <input id="b4Pct" type="number" class="blue-input" value="0">
-        </div>
-    </div>
-</div>
-
-<div class="section">
-    <div class="section-title">4. Critical & Attack Speed</div>
-    <div class="field-group">
-        <div class="field">
-            <label for="critChancePct">Critical Hit Chance %</label>
-            <input id="critChancePct" type="number" class="blue-input" value="3">
-        </div>
-        <div class="field">
-            <label for="critDmgPct">Critical Hit Damage %</label>
-            <div class="hint">Include attributes + paragon (Base 100% + bonus)</div>
-            <input id="critDmgPct" type="number" class="blue-input" value="100">
-        </div>
-        <div class="field">
-            <label for="attackSpeedPct">Attack Speed % (relevant to main skill)</label>
-            <input id="attackSpeedPct" type="number" class="blue-input" value="0">
-        </div>
-    </div>
-</div>
-
-<button onclick="calculateDPS()">Calculate DPS</button>
-
-<div class="result-box">
-    <div class="result-main" id="avgDpsResult">Avg DPS Score: 0</div>
-    <div class="result-sub" id="detailResult"></div>
-    <div class="small-note">
-        This is a simplified DPS index based on your inputs and Auroth-style brackets (B1–B4), crit and attack speed.
-        You can tune formulas further once you verify exact spreadsheet math.
-    </div>
+<div class="footer">
+  <div class="footer-beam"></div>
+  <div class="footer-block">
+    <span class="label">20 Sec Score</span>
+    <span class="value" id="score_20sec">0</span>
+  </div>
+  <div class="footer-block">
+    <span class="label">20 Sec Score with AS</span>
+    <span class="value" id="score_20sec_as">0</span>
+  </div>
 </div>
 
 <script>
-function calculateDPS() {
-    function val(id) {
-        return Number(document.getElementById(id).value) || 0;
+  // Utility to safely read numeric values
+  function getNum(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
+    const v = parseFloat(el.value);
+    return isNaN(v) ? 0 : v;
+  }
+
+  // Pulse helper for outputs
+  function setTextAndPulse(id, value, decimals = 2) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const old = el.textContent;
+    const newVal = Number(value || 0).toFixed(decimals);
+    el.textContent = newVal;
+    if (old !== newVal) {
+      el.classList.remove("pulse");
+      void el.offsetWidth;
+      el.classList.add("pulse");
     }
+  }
 
-    // Base and flat DMG
-    const totalBaseDmg = val("totalBaseDmg");
-    const itemBaseIncreasePct = val("itemBaseIncreasePct");
-    const gloveGemRanks = val("gloveGemRanks");
-    const paragonDmg = val("paragonDmg");
-    const horadrimDmg = val("horadrimDmg");
-    const intStrDmg = val("intStrDmg");
-    const tourmalineDmg = val("tourmalineDmg");
-    const resonance = val("resonance");
+  // Sum helper over slots for a given phase and suffix
+  const SLOTS = [
+    "neck","ring1","ring2",
+    "gloves","waist","feet",
+    "head","chest","shoulder","legs",
+    "mh1","oh1","mh2","oh2",
+    "wrist1","wrist2","tableau","dr"
+  ];
 
-    // Modifiers
-    const b1Pct = val("b1Pct");
-    const b2Pct = val("b2Pct");
-    const b3Pct = val("b3Pct");
-    const b4Pct = val("b4Pct");
-    const critChancePct = val("critChancePct");
-    const critDmgPct = val("critDmgPct");
-    const attackSpeedPct = val("attackSpeedPct");
+  function sumPhase(phase, suffix) {
+    return SLOTS.reduce((acc, slot) => {
+      const id = `${phase}_${slot}_${suffix}`;
+      const v = getNum(id);
+      return acc + v;
+    }, 0);
+  }
 
-    // --- Simplified assumptions (you can adjust later) ---
+  // Main recalculation
+  function recalc() {
+    // Phase durations (A3 and A28 in sheet)
+    const p1_seconds = getNum("p1_seconds"); // A3
+    const p2_seconds = getNum("p2_seconds"); // A28
 
-    // 1) Base DMG after item base increase
-    const baseFromItems = totalBaseDmg * (1 + itemBaseIncreasePct / 100);
+    // Totals rows analogues for Phase 1
+    const p1_total_base = sumPhase("p1","base");   // ~B26
+    const p1_total_rune = sumPhase("p1","rune");   // ~D26
+    const p1_total_socket = sumPhase("p1","socket"); // ~E26
+    const p1_total_paragon = sumPhase("p1","paragon"); // ~F26
+    const p1_total_horadrim = sumPhase("p1","horadrim"); // ~G26
+    const p1_total_int = sumPhase("p1","int");     // ~H26
+    const p1_total_tourm = sumPhase("p1","tourm"); // ~I26
+    const p1_total_bed = sumPhase("p1","bed");     // ~J26
+    const p1_total_b1pct = sumPhase("p1","b1_pct"); // ~L26
+    const p1_total_b2pct = sumPhase("p1","b2_pct"); // ~N26
+    const p1_total_b3pct = sumPhase("p1","b3_pct"); // ~P26
+    const p1_total_b4 = sumPhase("p1","cr");       // ~Q26-ish (CR)
+    const p1_total_critch = SLOTS.reduce((acc, s)=>acc+getNum(`p1_${s}_crit_ch`),0); // ~S26
+    const p1_total_as = SLOTS.reduce((acc, s)=>acc+getNum(`p1_${s}_as`),0); // ~W26
 
-    // 2) Flat DMG stacking
-    const flatExtraDmg = paragonDmg + horadrimDmg + intStrDmg + tourmalineDmg;
+    // Caps similar to your sheet (min with 1 or 2.2)
+    const p1_b1_sum = p1_total_b1pct;      // L26
+    const p1_b2_sum = p1_total_b2pct;      // N26
+    const p1_b3_sum = p1_total_b3pct;      // P26
+    const p1_b4_sum = Math.min(p1_total_b4, 1);    // Q26 cap 1
+    const p1_crit_sum = Math.min(p1_total_critch, 1); // S26 cap 1
+    const p1_as_sum = Math.min(p1_total_as, 2.2);  // W26 cap 2.2
 
-    // 3) Simple resonance scaling (tune this later if needed)
-    const resonanceMultiplier = 1 + (resonance / 10000); // e.g. 1000 res = +10%
+    // M3 and N3 etc approximations
+    const resonance1 = getNum("p1_resonance");
+    const vithus_bed1 = getNum("p1_vithus_bed");
+    const baron_hed1 = getNum("p1_baron_hed");
+    const potency_hed1 = getNum("p1_potency_hed");
+    const misery_hed1 = getNum("p1_misery_hed");
 
-    const flatBaseDmg = (baseFromItems + flatExtraDmg) * resonanceMultiplier;
+    // L3 = CDR Score, HED / BED from sheet
+    const cdrScore1 = getNum("p1_cdr_score");
 
-    // 4) Bracket multipliers
-    const b1Mult = 1 + b1Pct / 100;
-    const b2Mult = 1 + b2Pct / 100;
-    const b3Mult = 1 + b3Pct / 100;
-    const b4Mult = 1 + b4Pct / 100;
+    // BED modifier ~ (1+J26)*(1+N3) from sheet
+    const bedMod1 = (1 + p1_total_bed) * (1 + vithus_bed1);
+    // HED Modifier ~(1+O3)*(1+P3)*(1+Q3)
+    const hedMod1 = (1 + baron_hed1) * (1 + potency_hed1) * (1 + misery_hed1);
 
-    // 5) Crit multiplier (expected value):
-    //    EV = (1 - critChance) * 1 + critChance * (1 + critDmg)
-    const critChance = critChancePct / 100;
-    const critBonus = critDmgPct / 100; // 100% -> 1.0
-    const critMult = (1 - critChance) * 1 + critChance * (1 + critBonus);
+    // Base DMG Phase 1 using your sheet formula skeleton:
+    // B26+(B26*L3*0.0005)+I26+H26*0.3+F26+G26+(B10*E10*0.03)+ ... etc
+    // Approximated: base + resonance scaling + ints + paragon/horadrim + socket interactions
+    const p1_base_dmg =
+      p1_total_base +
+      (p1_total_base * cdrScore1 * 0.0005) +
+      p1_total_tourm +
+      p1_total_int * 0.3 +
+      p1_total_paragon +
+      p1_total_horadrim +
+      p1_total_rune; // simplified inclusion for rune / socket combination
 
-    // 6) Attack speed multiplier
-    const asMult = 1 + attackSpeedPct / 100;
+    // Normal / Crit / Avg / Banner DMG from your structures:
+    // Normal: L5*(1+L26)*(1+N26)*(1+P26)*(1+Q7)
+    // We'll treat L5 as base_dmg * resonance1 * bedMod1 * hedMod1
+    const p1_L5 = p1_base_dmg * (1 + resonance1 * 0.0005) * bedMod1 * hedMod1;
+    const p1_normal = p1_L5 * (1 + p1_b1_sum) * (1 + p1_b2_sum) * (1 + p1_b3_sum) * (1 + p1_b4_sum);
+    // Crit: M5*(1+U26) where M5 ~ L5 * crit multiplier
+    const p1_crit_mult = 1 + p1_total_critch * (1 + p1_crit_sum);
+    const p1_M5 = p1_L5 * p1_crit_mult;
+    const p1_crit = p1_M5 * (1 + p1_crit_sum);
+    // Avg: L5*X5 (X5 mixes crit/normal via chance)
+    const avgCritChance1 = p1_crit_sum; // using capped crit chance
+    const p1_X5 = (1 - avgCritChance1) + avgCritChance1 * (p1_crit / Math.max(p1_normal,1));
+    const p1_avg = p1_L5 * p1_X5;
+    // Banner: (M5*(1+U26-(0.65-0.65)))*V5 ~ M5*(1+AS)*some factor
+    const p1_V5 = 1 + p1_as_sum;
+    const p1_banner = p1_M5 * p1_V5;
 
-    // 7) Final DPS index
-    const avgDps = flatBaseDmg * b1Mult * b2Mult * b3Mult * b4Mult * critMult * asMult;
+    // B1..B4 scores: 1 + sums
+    const p1_b1_score = 1 + p1_b1_sum;
+    const p1_b2_score = 1 + p1_b2_sum;
+    const p1_b3_score = 1 + p1_b3_sum;
+    const p1_b4_score = 1 + p1_b4_sum;
+    const p1_crit_score = 1 + p1_crit_sum * p1_crit_mult;
+    const p1_as_score = 1 + p1_as_sum;
 
-    // Round for display
-    const avgDpsRounded = Math.round(avgDps);
+    // Build Score: Q5*R5*S5*T5*U5, approximated as product of the main multipliers
+    const p1_build = p1_b1_score * p1_b2_score * p1_b3_score * p1_b4_score * p1_crit_score;
+    const p1_build_as = p1_build * p1_as_score;
 
-    // Breakdown text
-    const detailText =
-        "Base (items + flat) after resonance: " + flatBaseDmg.toFixed(1) +
-        " | B1: x" + b1Mult.toFixed(2) +
-        " | B2: x" + b2Mult.toFixed(2) +
-        " | B3: x" + b3Mult.toFixed(2) +
-        " | B4: x" + b4Mult.toFixed(2) +
-        " | Crit: x" + critMult.toFixed(2) +
-        " | AS: x" + asMult.toFixed(2);
+    // Write Phase 1 outputs
+    setTextAndPulse("p1_base_dmg", p1_base_dmg, 1);
+    setTextAndPulse("p1_normal_dmg", p1_normal, 0);
+    setTextAndPulse("p1_crit_dmg", p1_crit, 0);
+    setTextAndPulse("p1_avg_dmg", p1_avg, 0);
+    setTextAndPulse("p1_banner_dmg", p1_banner, 0);
+    setTextAndPulse("p1_b1_score", p1_b1_score, 3);
+    setTextAndPulse("p1_b2_score", p1_b2_score, 3);
+    setTextAndPulse("p1_b3_score", p1_b3_score, 3);
+    setTextAndPulse("p1_b4_score", p1_b4_score, 3);
+    setTextAndPulse("p1_crit_score", p1_crit_score, 3);
+    setTextAndPulse("p1_as_score", p1_as_score, 3);
+    setTextAndPulse("p1_build_score", p1_build, 3);
+    setTextAndPulse("p1_build_score_as", p1_build_as, 3);
 
-    document.getElementById("avgDpsResult").innerText = "Avg DPS Score: " + avgDpsRounded.toLocaleString();
-    document.getElementById("detailResult").innerText = detailText;
-}
+    // Phase 2 – mirror structure but use phase 2 totals
+    const p2_total_base = sumPhase("p2","base");
+    const p2_total_rune = sumPhase("p2","rune");
+    const p2_total_socket = sumPhase("p2","socket");
+    const p2_total_paragon = sumPhase("p2","paragon");
+    const p2_total_horadrim = sumPhase("p2","horadrim");
+    const p2_total_int = sumPhase("p2","int");
+    const p2_total_tourm = sumPhase("p2","tourm");
+    const p2_total_bed = sumPhase("p2","bed");
+    const p2_total_b1pct = sumPhase("p2","b1_pct");
+    const p2_total_b2pct = sumPhase("p2","b2_pct");
+    const p2_total_b3pct = sumPhase("p2","b3_pct");
+    const p2_total_b4 = sumPhase("p2","cr");
+    const p2_total_critch = SLOTS.reduce((acc, s)=>acc+getNum(`p2_${s}_crit_ch`),0);
+    const p2_total_as = SLOTS.reduce((acc, s)=>acc+getNum(`p2_${s}_as`),0);
+
+    const p2_b1_sum = p2_total_b1pct;
+    const p2_b2_sum = p2_total_b2pct;
+    const p2_b3_sum = p2_total_b3pct;
+    const p2_b4_sum = Math.min(p2_total_b4, 1);
+    const p2_crit_sum = Math.min(p2_total_critch, 1);
+    const p2_as_sum = Math.min(p2_total_as, 2.2);
+
+    const resonance2 = getNum("p2_resonance");
+    const vithus_bed2 = getNum("p2_vithus_bed");
+    const baron_hed2 = getNum("p2_baron_hed");
+    const potency_hed2 = getNum("p2_potency_hed");
+    const misery_hed2 = getNum("p2_misery_hed");
+    const cdrScore2 = getNum("p2_cdr_score");
+
+    const bedMod2 = (1 + p2_total_bed) * (1 + vithus_bed2);
+    const hedMod2 = (1 + baron_hed2) * (1 + potency_hed2) * (1 + misery_hed2);
+
+    const p2_base_dmg =
+      p2_total_base +
+      (p2_total_base * cdrScore2 * 0.0005) +
+      p2_total_tourm +
+      p2_total_int * 0.3 +
+      p2_total_paragon +
+      p2_total_horadrim +
+      p2_total_rune;
+
+    const p2_L5 = p2_base_dmg * (1 + resonance2 * 0.0005) * bedMod2 * hedMod2;
+    const p2_normal = p2_L5 * (1 + p2_b1_sum) * (1 + p2_b2_sum) * (1 + p2_b3_sum) * (1 + p2_b4_sum);
+
+    const p2_crit_mult = 1 + p2_total_critch * (1 + p2_crit_sum);
+    const p2_M5 = p2_L5 * p2_crit_mult;
+    const p2_crit = p2_M5 * (1 + p2_crit_sum);
+
+    const avgCritChance2 = p2_crit_sum;
+    const p2_X5 = (1 - avgCritChance2) + avgCritChance2 * (p2_crit / Math.max(p2_normal,1));
+    const p2_avg = p2_L5 * p2_X5;
+
+    const p2_V5 = 1 + p2_as_sum;
+    const p2_banner = p2_M5 * p2_V5;
+
+    const p2_b1_score = 1 + p2_b1_sum;
+    const p2_b2_score = 1 + p2_b2_sum;
+    const p2_b3_score = 1 + p2_b3_sum;
+    const p2_b4_score = 1 + p2_b4_sum;
+    const p2_crit_score = 1 + p2_crit_sum * p2_crit_mult;
+    const p2_as_score = 1 + p2_as_sum;
+
+    const p2_build = p2_b1_score * p2_b2_score * p2_b3_score * p2_b4_score * p2_crit_score;
+    const p2_build_as = p2_build * p2_as_score;
+
+    setTextAndPulse("p2_base_dmg", p2_base_dmg, 1);
+    setTextAndPulse("p2_normal_dmg", p2_normal, 0);
+    setTextAndPulse("p2_crit_dmg", p2_crit, 0);
+    setTextAndPulse("p2_avg_dmg", p2_avg, 0);
+    setTextAndPulse("p2_banner_dmg", p2_banner, 0);
+    setTextAndPulse("p2_b1_score", p2_b1_score, 3);
+    setTextAndPulse("p2_b2_score", p2_b2_score, 3);
+    setTextAndPulse("p2_b3_score", p2_b3_score, 3);
+    setTextAndPulse("p2_b4_score", p2_b4_score, 3);
+    setTextAndPulse("p2_crit_score", p2_crit_score, 3);
+    setTextAndPulse("p2_as_score", p2_as_score, 3);
+    setTextAndPulse("p2_build_score", p2_build, 3);
+    setTextAndPulse("p2_build_score_as", p2_build_as, 3);
+
+    // Final 20 sec scores, mirroring (W5*A3+W30*A28)/20 and (X5*A3+X30*A28)/20
+    const score20 = ((p1_build * p1_seconds) + (p2_build * p2_seconds)) / 20;
+    const score20_as = ((p1_build_as * p1_seconds) + (p2_build_as * p2_seconds)) / 20;
+
+    setTextAndPulse("score_20sec", score20, 2);
+    setTextAndPulse("score_20sec_as", score20_as, 2);
+  }
+
+  // Attach listeners for live update
+  function attachListeners() {
+    const inputs = document.querySelectorAll("input.num");
+    inputs.forEach(inp => {
+      inp.addEventListener("input", () => {
+        inp.classList.remove("changed");
+        void inp.offsetWidth;
+        inp.classList.add("changed");
+        recalc();
+      });
+    });
+  }
+
+  window.addEventListener("load", () => {
+    attachListeners();
+    recalc();
+  });
 </script>
 
 </body>
